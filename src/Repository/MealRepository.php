@@ -18,4 +18,17 @@ class MealRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Meal::class);
     }
+
+    /**
+     * @param int $id
+     * @return int|mixed|string|null
+     * @throws \Doctrine\ORM\NonUniqueResultException
+     */
+    public function findOneById(int $id) {
+        return $this->createQueryBuilder('t')
+            ->where('t.id = :id')
+            ->setParameters(['id' => $id])
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
 }
