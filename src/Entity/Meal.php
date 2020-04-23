@@ -15,37 +15,37 @@ class Meal
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
      */
-    private $id;
+    private int $id;
 
     /**
      * @var string
      * @ORM\Column(type="string", nullable=true)
      */
-    private $description;
+    private ?string $description;
 
     /**
      * @var \DateTimeInterface
      * @ORM\Column(type="datetime", nullable=false)
      */
-    private $date;
+    private \DateTimeInterface $date;
 
     /**
      * @var int
      * @ORM\Column(type="integer", nullable=false)
      */
-    private $type;
+    private int $type;
 
     /**
      * @var string
      * @ORM\Column(type="string", nullable=true)
      */
-    private $picture;
+    private ?string $picture;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="meals")
      * @ORM\JoinColumn(name="user_id", referencedColumnName="id", nullable=false)
      */
-    private $user;
+    private User $user;
 
     public function getId(): ?int
     {

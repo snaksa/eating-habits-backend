@@ -4,6 +4,9 @@ namespace App\Repository;
 
 use App\Entity\Meal;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\NonUniqueResultException;
+use Doctrine\ORM\OptimisticLockException;
+use Doctrine\ORM\ORMException;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -22,13 +25,36 @@ class MealRepository extends ServiceEntityRepository
     /**
      * @param int $id
      * @return int|mixed|string|null
-     * @throws \Doctrine\ORM\NonUniqueResultException
+     * @throws NonUniqueResultException
      */
-    public function findOneById(int $id) {
+    public function findOneById(int $id): ?Meal
+    {
         return $this->createQueryBuilder('t')
             ->where('t.id = :id')
             ->setParameters(['id' => $id])
             ->getQuery()
             ->getOneOrNullResult();
+    }
+
+    /**
+     * @param Meal $meal
+     * @throws ORMException
+     * @throws OptimisticLockException
+     */
+    public function save(Meal $meal)
+    {
+        $this->_em->persist($meal);
+        $this->_em->flush();
+    }
+
+    /**
+     * @param Meal $meal
+     * @throws ORMException
+     * @throws OptimisticLockException
+     */
+    public function remove(Meal $meal)
+    {
+        $this->_em->remove($meal);
+        $this->_em->flush();
     }
 }

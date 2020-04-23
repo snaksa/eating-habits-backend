@@ -1,24 +1,22 @@
 <?php
 
-namespace App\Request\Meal;
+namespace App\Request\Weight;
 
 use App\Request\BaseRequest;
 use Symfony\Component\Validator\Constraints as Assert;
 
-class CreateMealRequest extends BaseRequest
+class CreateWeightRequest extends BaseRequest
 {
-    public ?string $description = null;
-    public ?string $picture = null;
-
     /**
      * @Assert\NotBlank(message="Date should not be blank")
      */
     public string $date;
 
     /**
-     * @Assert\NotBlank(message="Type should not be blank")
+     * @Assert\Positive(message="Weight should be a positive number")
+     * @Assert\NotBlank(message="Weight should not be blank")
      */
-    public int $type;
+    public int $weight;
 
     /**
      * @Assert\NotBlank(message="User should not be blank")

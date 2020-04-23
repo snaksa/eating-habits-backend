@@ -2,13 +2,14 @@
 
 namespace App\Controller;
 
-use App\Exception\EntityNotFoundException;
+use App\Builder\MealBuilder;
+use App\Exception;
 use App\Repository\MealRepository;
 use App\Request\Meal\CreateMealRequest;
-use App\Response\ErrorResponse;
+use App\Request\Meal\UpdateMealRequest;
 use App\Services\FractalManager;
 use App\Transformers\MealTransformer;
-use Doctrine\ORM\NonUniqueResultException;
+use Doctrine\ORM;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -16,11 +17,13 @@ use Symfony\Component\Routing\Annotation\Route;
 class MealsController extends BaseController
 {
     protected string $transformerClass = MealTransformer::class;
-    public MealRepository $mealRepository;
+    private MealRepository $mealRepository;
+    private MealBuilder $builder;
 
-    public function __construct(MealRepository $mealRepository, FractalManager $fractalManager)
+    public function __construct(MealRepository $waterSupplyRepository, MealBuilder $builder, FractalManager $fractalManager)
     {
-        $this->mealRepository = $mealRepository;
+        $this->mealRepository = $waterSupplyRepository;
+        $this->builder = $builder;
 
         parent::__construct($fractalManager);
     }
@@ -44,8 +47,8 @@ class MealsController extends BaseController
      * @param Request $request
      * @param int $id
      * @return JsonResponse
-     * @throws NonUniqueResultException
-     * @throws EntityNotFoundException
+     * @throws ORM\NonUniqueResultException
+     * @throws Exception\EntityNotFoundException
      */
     public function single(Request $request, int $id)
     {
@@ -63,29 +66,77 @@ class MealsController extends BaseController
      * @Route("/meals", methods={"POST"})
      * @param CreateMealRequest $request
      * @return JsonResponse
+     * @throws ORM\ORMException
+     * @throws ORM\OptimisticLockException
+     * @throws Exception\EntityNotFoundException
+     * @throws Exception\InvalidDateException
+     * @throws Exception\InvalidMealTypeException
      */
     public function create(CreateMealRequest $request)
     {
-        return new JsonResponse(["test" => $request->description]);
+        $this->setRequest($request->getRequest());
+
+        $meal = $this->builder
+            ->create()
+            ->bind($request)
+            ->build();
+
+        $this->mealRepository->save($meal);
+
+        return $this->item($meal);
     }
 
     /**
-     * @Route("/meals/{id}", methods={"PUT"})
+     * @Route("/meals/{id}", methods={"POST"})
+     * @param UpdateMealRequest $request
      * @param int $id
      * @return JsonResponse
+     * @throws Exception\EntityNotFoundException
+     * @throws Exception\InvalidDateException
+     * @throws Exception\InvalidMealTypeException
+     * @throws ORM\NonUniqueResultException
+     * @throws ORM\ORMException
+     * @throws ORM\OptimisticLockException
      */
-    public function update(int $id)
+    public function update(UpdateMealRequest $request, int $id)
     {
-        return new JsonResponse(["test" => $id]);
+        $this->setRequest($request->getRequest());
+
+        $meal = $this->mealRepository->findOneById($id);
+        if (!$meal) {
+            throw new Exception\EntityNotFoundException("Meal with ID {$id} was not found");
+        }
+
+        $meal = $this->builder
+            ->setMeal($meal)
+            ->bind($request)
+            ->build();
+
+        $this->mealRepository->save($meal);
+
+        return $this->item($meal);
     }
 
     /**
      * @Route("/meals/{id}", methods={"DELETE"})
      * @param int $id
      * @return JsonResponse
+     * @throws Exception\EntityNotFoundException
+     * @throws ORM\NonUniqueResultException
+     * @throws ORM\ORMException
+     * @throws ORM\OptimisticLockException
      */
     public function delete(int $id)
     {
-        return new JsonResponse(["test" => $id]);
+        $meal = $this->mealRepository->findOneById($id);
+        if (!$meal) {
+            throw new Exception\EntityNotFoundException("Meal with ID {$id} was not found");
+        }
+
+        $clone = clone $meal;
+
+        $this->mealRepository->remove($meal);
+
+        return $this->item($clone);
     }
 }
