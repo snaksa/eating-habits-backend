@@ -19,9 +19,4 @@ class CreateMealRequest extends BaseRequest
      * @Assert\NotBlank(message="Type should not be blank")
      */
     public int $type;
-
-    /**
-     * @Assert\NotBlank(message="User should not be blank")
-     */
-    public int $userId;
 }

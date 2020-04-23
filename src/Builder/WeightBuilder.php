@@ -33,7 +33,6 @@ class WeightBuilder extends BaseBuilder
     /**
      * @param CreateWeightRequest|UpdateWeightRequest $input
      * @return $this
-     * @throws EntityNotFoundException
      * @throws InvalidDateException
      */
     public function bind($input): self {
@@ -50,16 +49,6 @@ class WeightBuilder extends BaseBuilder
 
         if($input->weight !== null) {
             $this->setWeightAmount($input->weight);
-        }
-
-        if(property_exists($input, 'userId') && $input->userId !== null) {
-            $user = $this->findEntity($input->userId, $this->userRepository);
-
-            if(!$user) {
-                throw new EntityNotFoundException("User with ID {$input->userId} was not found");
-            }
-
-            $this->setUser($user);
         }
 
         return $this;

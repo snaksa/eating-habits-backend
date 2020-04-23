@@ -17,9 +17,4 @@ class CreateWeightRequest extends BaseRequest
      * @Assert\NotBlank(message="Weight should not be blank")
      */
     public int $weight;
-
-    /**
-     * @Assert\NotBlank(message="User should not be blank")
-     */
-    public int $userId;
 }

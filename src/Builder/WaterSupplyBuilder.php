@@ -52,16 +52,6 @@ class WaterSupplyBuilder extends BaseBuilder
             $this->setAmount($input->amount);
         }
 
-        if(property_exists($input, 'userId') && $input->userId !== null) {
-            $user = $this->findEntity($input->userId, $this->userRepository);
-
-            if(!$user) {
-                throw new EntityNotFoundException("User with ID {$input->userId} was not found");
-            }
-
-            $this->setUser($user);
-        }
-
         return $this;
     }
 

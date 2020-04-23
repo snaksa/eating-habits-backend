@@ -10,7 +10,9 @@ class UserTransformer extends TransformerAbstract
     public function transform(User $user)
     {
         return [
-            'id' => $user->getId()
+            'id' => $user->getId(),
+            'username' => $user->getUsername(),
+            'name' => $user->getName() ?? $user->getUsername(),
         ];
     }
 }

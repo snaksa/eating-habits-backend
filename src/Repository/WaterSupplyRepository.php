@@ -2,6 +2,7 @@
 
 namespace App\Repository;
 
+use App\Entity\User;
 use App\Entity\WaterSupply;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\NonUniqueResultException;
@@ -34,6 +35,15 @@ class WaterSupplyRepository extends ServiceEntityRepository
             ->setParameters(['id' => $id])
             ->getQuery()
             ->getOneOrNullResult();
+    }
+
+    public function findUserWaterSupplies(User $user)
+    {
+        return $this->createQueryBuilder('t')
+            ->where('t.user = :id')
+            ->setParameters(['id' => $user->getId()])
+            ->getQuery()
+            ->getResult();
     }
 
     /**

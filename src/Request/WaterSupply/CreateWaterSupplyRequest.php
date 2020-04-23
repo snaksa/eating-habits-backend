@@ -17,9 +17,4 @@ class CreateWaterSupplyRequest extends BaseRequest
      * @Assert\NotBlank(message="Amount should not be blank")
      */
     public int $amount;
-
-    /**
-     * @Assert\NotBlank(message="User should not be blank")
-     */
-    public int $userId;
 }

@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Meal;
+use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\OptimisticLockException;
@@ -34,6 +35,15 @@ class MealRepository extends ServiceEntityRepository
             ->setParameters(['id' => $id])
             ->getQuery()
             ->getOneOrNullResult();
+    }
+
+    public function findUserMeals(User $user)
+    {
+        return $this->createQueryBuilder('t')
+            ->where('t.user = :id')
+            ->setParameters(['id' => $user])
+            ->getQuery()
+            ->getResult();
     }
 
     /**
