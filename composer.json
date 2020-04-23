@@ -20,6 +20,7 @@
         "symfony/yaml": "5.0.*"
     },
     "require-dev": {
+        "phpro/grumphp": "^0.18.0",
         "symfony/maker-bundle": "^1.15",
         "symfony/security-bundle": "5.0.*"
     },
