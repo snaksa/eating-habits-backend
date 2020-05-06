@@ -18,38 +18,51 @@ class User implements UserInterface
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
      */
-    private $id;
+    private int $id;
 
     /**
      * @var string
      * @ORM\Column(type="string", nullable=true)
      */
-    private $name;
+    private ?string $name;
 
     /**
      * @ORM\Column(type="string", length=180, unique=true)
      */
-    private $username;
+    private string $username;
 
     /**
      * @ORM\Column(type="json")
      */
-    private $roles = [];
+    private array $roles = [];
 
     /**
      * @var string The hashed password
      * @ORM\Column(type="string")
      */
-    private $password;
+    private string $password;
 
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\Meal", mappedBy="user")
      */
     private $meals;
 
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\WaterSupply", mappedBy="user")
+     */
+    private $waterSupplies;
+
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Weight", mappedBy="user")
+     * @ORM\OrderBy({"date" = "DESC"})
+     */
+    private $weights;
+
     public function __construct()
     {
         $this->meals = new ArrayCollection();
+        $this->waterSupplies = new ArrayCollection();
+        $this->weights = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -69,7 +82,7 @@ class User implements UserInterface
         return $this;
     }
 
-    public function getUsername(): ?string
+    public function getUsername(): string
     {
         return $this->username;
     }
@@ -146,6 +159,68 @@ class User implements UserInterface
             // set the owning side to null (unless already changed)
             if ($meal->getUser() === $this) {
                 $meal->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|WaterSupply[]
+     */
+    public function getWaterSupplies(): Collection
+    {
+        return $this->waterSupplies;
+    }
+
+    public function addWaterSupply(WaterSupply $waterSupply): self
+    {
+        if (!$this->waterSupplies->contains($waterSupply)) {
+            $this->waterSupplies[] = $waterSupply;
+            $waterSupply->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeWaterSupply(WaterSupply $waterSupply): self
+    {
+        if ($this->waterSupplies->contains($waterSupply)) {
+            $this->waterSupplies->removeElement($waterSupply);
+            // set the owning side to null (unless already changed)
+            if ($waterSupply->getUser() === $this) {
+                $waterSupply->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Weight[]
+     */
+    public function getWeights(): Collection
+    {
+        return $this->weights;
+    }
+
+    public function addWeight(Weight $weight): self
+    {
+        if (!$this->weights->contains($weight)) {
+            $this->weights[] = $weight;
+            $weight->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeWeight(Weight $weight): self
+    {
+        if ($this->weights->contains($weight)) {
+            $this->weights->removeElement($weight);
+            // set the owning side to null (unless already changed)
+            if ($weight->getUser() === $this) {
+                $weight->setUser(null);
             }
         }
 

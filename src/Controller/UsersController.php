@@ -15,6 +15,7 @@ use App\Exception;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Doctrine\ORM;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
 class UsersController extends BaseController
@@ -83,10 +84,13 @@ class UsersController extends BaseController
     /**
      * @IsGranted("ROLE_USER")
      * @Route("/users/me", methods={"GET"})
+     * @param Request $request
+     * @return JsonResponse
      * @throws Exception\NotAuthenticatedException
      */
-    public function me()
+    public function me(Request $request)
     {
+        $this->setRequest($request);
         return $this->item($this->authService->getCurrentUser());
     }
 

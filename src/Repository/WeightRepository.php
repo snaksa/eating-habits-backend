@@ -42,6 +42,7 @@ class WeightRepository extends ServiceEntityRepository
         return $this->createQueryBuilder('t')
             ->where('t.user = :id')
             ->setParameters(['id' => $user->getId()])
+            ->orderBy('t.date', 'DESC')
             ->getQuery()
             ->getResult();
     }

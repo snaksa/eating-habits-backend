@@ -9,6 +9,7 @@ use App\Request\WaterSupply\CreateWaterSupplyRequest;
 use App\Request\WaterSupply\UpdateWaterSupplyRequest;
 use App\Services\AuthorizationService;
 use App\Services\FractalManager;
+use App\Traits\DateUtils;
 use App\Transformers\WaterSupplyTransformer;
 use Doctrine\ORM;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -18,6 +19,8 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 
 class WaterSupplyController extends BaseController
 {
+    use DateUtils;
+
     protected string $transformerClass = WaterSupplyTransformer::class;
     private WaterSupplyRepository $waterSupplyRepository;
     private WaterSupplyBuilder $builder;
@@ -47,9 +50,69 @@ class WaterSupplyController extends BaseController
     {
         $this->setRequest($request);
 
-        $meals = $this->waterSupplyRepository->findUserWaterSupplies($this->authService->getCurrentUser());
+        $waterSupplies = $this->waterSupplyRepository->findUserWaterSupplies($this->authService->getCurrentUser());
 
-        return $this->collection($meals);
+        return $this->collection($waterSupplies);
+    }
+
+    /**
+     * @IsGranted("ROLE_USER")
+     * @Route("/water-supplies/byDay", methods={"GET"})
+     * @param Request $request
+     * @return JsonResponse
+     * @throws Exception\NotAuthenticatedException
+     * @throws \Exception
+     */
+    public function byDay(Request $request)
+    {
+        $this->setRequest($request);
+
+        $date = $request->get('date', null);
+
+        if ($date) {
+            $startDate = $this->createFromFormat($date);
+            $endDate = (clone $startDate)->modify('+ 24 hours');
+        } else {
+            $startDate = $this->getCurrentDateTime()->setTime(0, 0, 0);
+            $endDate = (clone $startDate)->modify('+ 24 hours');
+        }
+
+        $waterSupplies = $this->waterSupplyRepository
+            ->findUserWaterSuppliesByDay($this->authService->getCurrentUser(), $startDate, $endDate);
+
+        return $this->collection($waterSupplies);
+    }
+
+    /**
+     * @IsGranted("ROLE_USER")
+     * @Route("/water-supplies/groupByDays", methods={"GET"})
+     * @param Request $request
+     * @return JsonResponse
+     * @throws Exception\NotAuthenticatedException
+     * @throws \Exception
+     */
+    public function groupByDays(Request $request)
+    {
+        $this->setRequest($request);
+
+        $startDate = $request->get('startDate', null);
+        if (!$startDate) {
+            $startDate = $this->getCurrentDateTime()->modify('- 7 days');
+        } else {
+            $startDate = $this->createFromFormat($startDate);
+        }
+
+        $endDate = $request->get('endDate', null);
+        if (!$endDate) {
+            $endDate = $this->getCurrentDateTime();
+        } else {
+            $endDate = $this->createFromFormat($endDate);
+        }
+
+        $waterSupplies = $this->waterSupplyRepository
+            ->findUserWaterSuppliesGroupByDay($this->authService->getCurrentUser(), $startDate, $endDate);
+
+        return new JsonResponse($waterSupplies);
     }
 
     /**

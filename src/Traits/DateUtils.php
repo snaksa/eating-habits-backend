@@ -5,6 +5,7 @@ namespace App\Traits;
 use \DateTime;
 use \DateTimeInterface;
 use DateTimeZone;
+use Exception;
 
 trait DateUtils
 {
@@ -42,7 +43,7 @@ trait DateUtils
 
     /**
      * @return DateTime
-     * @throws \Exception
+     * @throws Exception
      */
     public function getCurrentDateTime(): DateTime
     {
