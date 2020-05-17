@@ -70,11 +70,10 @@ class TokenAuthenticator extends AbstractGuardAuthenticator
 
     public function onAuthenticationFailure(Request $request, AuthenticationException $exception)
     {
-        $data = [
-            'message' => strtr($exception->getMessageKey(), $exception->getMessageData())
-        ];
-
-        return new JsonResponse($data, Response::HTTP_FORBIDDEN);
+        throw new NotAuthenticatedException(
+            'Authentication Required',
+            JsonResponse::HTTP_FORBIDDEN
+        );
     }
 
     /**

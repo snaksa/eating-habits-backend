@@ -14,15 +14,17 @@ class BaseRequest
         $this->map();
     }
 
-    public function getRequest() {
+    public function getRequest()
+    {
         return $this->request;
     }
 
-    public function map() {
-        $all = $this->request->request->all();
+    public function map()
+    {
+        $data = json_decode($this->request->getContent(), true);
 
-        foreach ($all as $key => $value) {
-            if(property_exists($this, $key)) {
+        foreach ($data as $key => $value) {
+            if (property_exists($this, $key)) {
                 $this->$key = $value;
             }
         }

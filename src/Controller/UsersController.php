@@ -74,11 +74,11 @@ class UsersController extends BaseController
 
         $this->authService->isPasswordValid($user, $request->password);
 
-        $apiKey = $this->builder
+        $token = $this->builder
             ->setUser($user)
             ->getApiKey();
 
-        return $this->item($apiKey, ApiKeyTransformer::class);
+        return $this->item(['token' => $token, 'expiresIn' => 108000], ApiKeyTransformer::class);
     }
 
     /**

@@ -24,12 +24,12 @@ class WeightController extends BaseController
     private AuthorizationService $authService;
 
     public function __construct(
-        WeightRepository $waterSupplyRepository,
+        WeightRepository $weightRepository,
         WeightBuilder $builder,
         AuthorizationService $authService,
         FractalManager $fractalManager
     ) {
-        $this->weightRepository = $waterSupplyRepository;
+        $this->weightRepository = $weightRepository;
         $this->builder = $builder;
         $this->authService = $authService;
 
@@ -156,18 +156,18 @@ class WeightController extends BaseController
      */
     public function delete(int $id)
     {
-        $waterSupply = $this->weightRepository->findOneById($id);
-        if (!$waterSupply) {
+        $weightRecord = $this->weightRepository->findOneById($id);
+        if (!$weightRecord) {
             throw new Exception\EntityNotFoundException("Weight with ID {$id} was not found");
         }
 
-        if ($waterSupply->getUser()->getId() !== $this->authService->getCurrentUser()->getId()) {
+        if ($weightRecord->getUser()->getId() !== $this->authService->getCurrentUser()->getId()) {
             throw new Exception\NotAuthorizedException('You do not have permissions to access this resource');
         }
 
-        $clone = clone $waterSupply;
+        $clone = clone $weightRecord;
 
-        $this->weightRepository->remove($waterSupply);
+        $this->weightRepository->remove($weightRecord);
 
         return $this->item($clone);
     }

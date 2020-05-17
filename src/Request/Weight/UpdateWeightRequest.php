@@ -12,5 +12,5 @@ class UpdateWeightRequest extends BaseRequest
     /**
      * @Assert\Positive(message="Weight should be a positive number")
      */
-    public ?int $weight = null;
+    public ?float $weight = null;
 }

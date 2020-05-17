@@ -6,10 +6,11 @@ use League\Fractal\TransformerAbstract;
 
 class ApiKeyTransformer extends TransformerAbstract
 {
-    public function transform(string $key)
+    public function transform(array $auth)
     {
         return [
-            'apiKey' => $key
+            'token' => $auth['token'],
+            'expiresIn' => $auth['expiresIn'],
         ];
     }
 }

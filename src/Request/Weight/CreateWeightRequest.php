@@ -16,5 +16,5 @@ class CreateWeightRequest extends BaseRequest
      * @Assert\Positive(message="Weight should be a positive number")
      * @Assert\NotBlank(message="Weight should not be blank")
      */
-    public int $weight;
+    public float $weight;
 }
