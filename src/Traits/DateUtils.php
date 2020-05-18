@@ -38,7 +38,7 @@ trait DateUtils
     public function formatDate(DateTimeInterface $date, string $format = null)
     {
         $format = $format ?? $this->dateTimeFormat;
-        return $date->format($format);
+        return $date->format($format) . ($format === $this->dateTimeFormat ? 'Z' : '');
     }
 
     /**

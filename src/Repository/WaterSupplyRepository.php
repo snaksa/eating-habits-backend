@@ -67,15 +67,13 @@ class WaterSupplyRepository extends ServiceEntityRepository
         \DateTimeInterface $endDate
     ) {
         return $this->createQueryBuilder('t')
-            ->select('DATE_FORMAT(t.date, \'%Y-%m-%d\') as date, SUM(t.amount) as total')
-            ->where('t.user = :id AND t.date >= :startDate AND t.date <= :endDate')
+            ->where('t.user = :id AND t.date >= :startDate AND t.date < :endDate')
             ->setParameters([
                 'id' => $user->getId(),
                 'startDate' => $startDate,
                 'endDate' => $endDate
             ])
-            ->orderBy('date', 'ASC')
-            ->groupBy('date')
+            ->orderBy('t.date', 'ASC')
             ->getQuery()
             ->getResult();
     }

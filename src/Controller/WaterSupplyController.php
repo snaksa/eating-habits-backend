@@ -112,7 +112,34 @@ class WaterSupplyController extends BaseController
         $waterSupplies = $this->waterSupplyRepository
             ->findUserWaterSuppliesGroupByDay($this->authService->getCurrentUser(), $startDate, $endDate);
 
-        return new JsonResponse($waterSupplies);
+        $currentDay = (clone $startDate)->modify('+ 1 days');
+        $total = 0;
+        $result = [];
+
+        $i = 0;
+        while ($i < count($waterSupplies)) {
+            while ($waterSupplies[$i]->getDate() < $currentDay) {
+                $total += $waterSupplies[$i]->getAmount();
+                $i++;
+
+                if ($i === count($waterSupplies)) {
+                    break;
+                }
+            }
+
+            $result[] = [
+                'date' => $this->formatDate($startDate),
+                'amount' => $total
+            ];
+
+            $total = 0;
+            $startDate = $startDate->modify('+ 1 days');
+            $currentDay = (clone $startDate)->modify('+ 1 days');
+        }
+
+        return new JsonResponse([
+            'data' => $result
+        ]);
     }
 
     /**
