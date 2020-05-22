@@ -70,6 +70,13 @@ class User implements UserInterface
         return $this->id;
     }
 
+    public function setId(int $id): self
+    {
+        $this->id = $id;
+
+        return $this;
+    }
+
     public function getName(): ?string
     {
         return $this->name;
@@ -102,7 +109,6 @@ class User implements UserInterface
 
         return array_unique($roles);
     }
-
 
 
     public function setRoles(array $roles): self
@@ -156,10 +162,6 @@ class User implements UserInterface
     {
         if ($this->meals->contains($meal)) {
             $this->meals->removeElement($meal);
-            // set the owning side to null (unless already changed)
-            if ($meal->getUser() === $this) {
-                $meal->setUser(null);
-            }
         }
 
         return $this;
@@ -187,10 +189,6 @@ class User implements UserInterface
     {
         if ($this->waterSupplies->contains($waterSupply)) {
             $this->waterSupplies->removeElement($waterSupply);
-            // set the owning side to null (unless already changed)
-            if ($waterSupply->getUser() === $this) {
-                $waterSupply->setUser(null);
-            }
         }
 
         return $this;
@@ -218,10 +216,6 @@ class User implements UserInterface
     {
         if ($this->weights->contains($weight)) {
             $this->weights->removeElement($weight);
-            // set the owning side to null (unless already changed)
-            if ($weight->getUser() === $this) {
-                $weight->setUser(null);
-            }
         }
 
         return $this;

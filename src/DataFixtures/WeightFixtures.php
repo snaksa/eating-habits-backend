@@ -5,9 +5,10 @@ namespace App\DataFixtures;
 use App\Entity\Weight;
 use App\Traits\DateUtils;
 use Doctrine\Bundle\FixturesBundle\Fixture;
+use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 
-class WeightFixtures extends Fixture
+class WeightFixtures extends Fixture implements DependentFixtureInterface
 {
     use DateUtils;
 
@@ -28,5 +29,12 @@ class WeightFixtures extends Fixture
         }
 
         $manager->flush();
+    }
+
+    public function getDependencies()
+    {
+        return [
+            UserFixtures::class
+        ];
     }
 }

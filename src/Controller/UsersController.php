@@ -57,7 +57,10 @@ class UsersController extends BaseController
 
         $this->userRepository->save($user);
 
-        return $this->item($user);
+        $token = $this->builder
+            ->getApiKey();
+
+        return $this->item(['token' => $token, 'expiresIn' => 108000], ApiKeyTransformer::class);
     }
 
     /**
