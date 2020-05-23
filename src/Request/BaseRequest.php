@@ -23,9 +23,11 @@ class BaseRequest
     {
         $data = json_decode($this->request->getContent(), true);
 
-        foreach ($data as $key => $value) {
-            if (property_exists($this, $key)) {
-                $this->$key = $value;
+        if ($data) {
+            foreach ($data as $key => $value) {
+                if (property_exists($this, $key)) {
+                    $this->$key = $value;
+                }
             }
         }
     }

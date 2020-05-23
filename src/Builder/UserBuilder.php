@@ -41,7 +41,6 @@ class UserBuilder extends BaseBuilder
      */
     public function bind($input): self
     {
-
         if (property_exists($input, 'username') && $input->username !== null) {
             $this->setUsername($input->username);
         }
@@ -50,7 +49,7 @@ class UserBuilder extends BaseBuilder
             $this->setName($input->name);
         }
 
-        if ($input->password !== null) {
+        if (property_exists($input, 'password') && $input->password !== null) {
             if ($input->password !== $input->confirmPassword) {
                 throw new PasswordConfirmationException('The two passwords do not match');
             }
@@ -74,6 +73,7 @@ class UserBuilder extends BaseBuilder
 
         return $this;
     }
+
     public function setName(string $name): self
     {
         $this->user->setName($name);
@@ -89,7 +89,8 @@ class UserBuilder extends BaseBuilder
         return $this;
     }
 
-    public function getApiKey() {
+    public function getApiKey()
+    {
         return $this->jwtManager->create($this->user);
     }
 

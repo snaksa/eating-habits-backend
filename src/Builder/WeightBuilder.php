@@ -4,9 +4,7 @@ namespace App\Builder;
 
 use App\Entity\User;
 use App\Entity\Weight;
-use App\Exception\EntityNotFoundException;
 use App\Exception\InvalidDateException;
-use App\Repository\UserRepository;
 use App\Request\Weight\CreateWeightRequest;
 use App\Request\Weight\UpdateWeightRequest;
 use App\Traits\DateUtils;
@@ -17,14 +15,8 @@ class WeightBuilder extends BaseBuilder
 
     private Weight $weight;
 
-    private UserRepository $userRepository;
-
-    public function __construct(UserRepository $repository)
+    public function create(): self
     {
-        $this->userRepository = $repository;
-    }
-
-    public function create(): self {
         $this->weight = new Weight();
 
         return $this;
@@ -35,48 +27,54 @@ class WeightBuilder extends BaseBuilder
      * @return $this
      * @throws InvalidDateException
      */
-    public function bind($input): self {
+    public function bind($input): self
+    {
 
-        if($input->date !== null) {
+        if ($input->date !== null) {
             $date = $this->createFromFormat($input->date, $this->dateTimeFormat);
 
-            if(!$date) {
+            if (!$date) {
                 throw new InvalidDateException('Date is not valid');
             }
 
             $this->setDate($date);
         }
 
-        if($input->weight !== null) {
+        if ($input->weight !== null) {
             $this->setWeightAmount($input->weight);
         }
 
         return $this;
     }
 
-    public function setWeight(Weight $weight): self {
+    public function setWeight(Weight $weight): self
+    {
         $this->weight = $weight;
 
         return $this;
     }
 
-    public function setDate(\DateTimeInterface $date) {
+    public function setDate(\DateTimeInterface $date)
+    {
         $this->weight->setDate($date);
     }
 
-    public function setWeightAmount(string $weight): self {
+    public function setWeightAmount(string $weight): self
+    {
         $this->weight->setWeight($weight);
 
         return $this;
     }
 
-    public function setUser(User $user): self {
+    public function setUser(User $user): self
+    {
         $this->weight->setUser($user);
 
         return $this;
     }
 
-    public function build(): Weight {
+    public function build(): Weight
+    {
         return $this->weight;
     }
 }

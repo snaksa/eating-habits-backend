@@ -4,9 +4,7 @@ namespace App\Builder;
 
 use App\Entity\User;
 use App\Entity\WaterSupply;
-use App\Exception\EntityNotFoundException;
 use App\Exception\InvalidDateException;
-use App\Repository\UserRepository;
 use App\Request\WaterSupply\CreateWaterSupplyRequest;
 use App\Request\WaterSupply\UpdateWaterSupplyRequest;
 use App\Traits\DateUtils;
@@ -17,14 +15,8 @@ class WaterSupplyBuilder extends BaseBuilder
 
     private WaterSupply $waterSupply;
 
-    private UserRepository $userRepository;
-
-    public function __construct(UserRepository $repository)
+    public function create(): self
     {
-        $this->userRepository = $repository;
-    }
-
-    public function create(): self {
         $this->waterSupply = new WaterSupply();
 
         return $this;
@@ -33,51 +25,56 @@ class WaterSupplyBuilder extends BaseBuilder
     /**
      * @param CreateWaterSupplyRequest|UpdateWaterSupplyRequest $input
      * @return $this
-     * @throws EntityNotFoundException
      * @throws InvalidDateException
      */
-    public function bind($input): self {
+    public function bind($input): self
+    {
 
-        if($input->date !== null) {
+        if ($input->date !== null) {
             $date = $this->createFromFormat($input->date, $this->dateTimeFormat);
 
-            if(!$date) {
+            if (!$date) {
                 throw new InvalidDateException('Date is not valid');
             }
 
             $this->setDate($date);
         }
 
-        if($input->amount !== null) {
+        if ($input->amount !== null) {
             $this->setAmount($input->amount);
         }
 
         return $this;
     }
 
-    public function setWaterSupply(WaterSupply $waterSupply): self {
+    public function setWaterSupply(WaterSupply $waterSupply): self
+    {
         $this->waterSupply = $waterSupply;
 
         return $this;
     }
 
-    public function setDate(\DateTimeInterface $date) {
+    public function setDate(\DateTimeInterface $date)
+    {
         $this->waterSupply->setDate($date);
     }
 
-    public function setAmount(string $amount): self {
+    public function setAmount(int $amount): self
+    {
         $this->waterSupply->setAmount($amount);
 
         return $this;
     }
 
-    public function setUser(User $user): self {
+    public function setUser(User $user): self
+    {
         $this->waterSupply->setUser($user);
 
         return $this;
     }
 
-    public function build(): WaterSupply {
+    public function build(): WaterSupply
+    {
         return $this->waterSupply;
     }
 }

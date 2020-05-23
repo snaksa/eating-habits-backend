@@ -19,14 +19,8 @@ class MealBuilder extends BaseBuilder
 
     private Meal $meal;
 
-    private UserRepository $userRepository;
-
-    public function __construct(UserRepository $repository)
+    public function create(): self
     {
-        $this->userRepository = $repository;
-    }
-
-    public function create(): self {
         $this->meal = new Meal();
 
         return $this;
@@ -35,27 +29,32 @@ class MealBuilder extends BaseBuilder
     /**
      * @param CreateMealRequest|UpdateMealRequest $input
      * @return $this
-     * @throws EntityNotFoundException
      * @throws InvalidDateException
      * @throws InvalidMealTypeException
      */
-    public function bind($input): self {
-        if($input->description !== null) {
+    public function bind($input): self
+    {
+        if ($input->description !== null) {
             $this->setDescription($input->description);
         }
 
-        if($input->type !== null) {
-            if(!in_array($input->type, MealTypes::all())) {
+        if ($input->picture !== null) {
+            // TODO: upload picture
+            $this->setPicture($input->picture);
+        }
+
+        if ($input->type !== null) {
+            if (!in_array($input->type, MealTypes::all())) {
                 throw new InvalidMealTypeException("Meal Type {$input->type} does not exist");
             }
 
             $this->setType($input->type);
         }
 
-        if($input->date !== null) {
+        if ($input->date !== null) {
             $date = $this->createFromFormat($input->date, $this->dateTimeFormat);
 
-            if(!$date) {
+            if (!$date) {
                 throw new InvalidDateException('Date is not valid');
             }
 
@@ -65,35 +64,46 @@ class MealBuilder extends BaseBuilder
         return $this;
     }
 
-    public function setMeal(Meal $meal): self {
+    public function setMeal(Meal $meal): self
+    {
         $this->meal = $meal;
 
         return $this;
     }
 
-    public function setDate(\DateTimeInterface $date) {
+    public function setDate(\DateTimeInterface $date)
+    {
         $this->meal->setDate($date);
     }
 
-    public function setDescription(string $description): self {
+    public function setDescription(string $description): self
+    {
         $this->meal->setDescription($description);
 
         return $this;
     }
 
-    public function setType(int $type): self {
+    public function setType(int $type): self
+    {
         $this->meal->setType($type);
 
         return $this;
     }
 
-    public function setUser(User $user): self {
+    public function setPicture(string $picture)
+    {
+        $this->meal->setPicture($picture);
+    }
+
+    public function setUser(User $user): self
+    {
         $this->meal->setUser($user);
 
         return $this;
     }
 
-    public function build(): Meal {
+    public function build(): Meal
+    {
         return $this->meal;
     }
 }
