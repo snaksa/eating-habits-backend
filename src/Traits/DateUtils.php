@@ -9,8 +9,8 @@ use Exception;
 
 trait DateUtils
 {
-    protected $dateTimeFormat = 'Y-m-d H:i:s';
-    protected $dateFormat = 'Y-m-d';
+    protected string $dateTimeFormat = 'Y-m-d H:i:s';
+    protected string $dateFormat = 'Y-m-d';
 
     public function createFromFormat(
         string $date,
