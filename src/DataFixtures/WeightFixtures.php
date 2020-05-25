@@ -22,8 +22,7 @@ class WeightFixtures extends Fixture implements DependentFixtureInterface
                 $weight->setDate($date);
                 $weight->setUser($this->getReference("user_demo" . ($j === 0 ? '' : '2')));
                 $manager->persist($weight);
-                $this->setReference("user_demo_water_supply_{$i}", $weight);
-
+                $this->setReference("user_demo_weight_{$j}_{$i}", $weight);
                 $date = (clone $date)->modify('+ 24 hours');
             }
         }

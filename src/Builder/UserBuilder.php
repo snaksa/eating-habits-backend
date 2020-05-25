@@ -6,8 +6,8 @@ use App\Entity\User;
 use App\Exception\PasswordConfirmationException;
 use App\Request\User\CreateUserRequest;
 use App\Request\User\UpdateUserRequest;
+use App\Services\JwtManagerService;
 use App\Traits\DateUtils;
-use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
 class UserBuilder extends BaseBuilder
@@ -15,12 +15,12 @@ class UserBuilder extends BaseBuilder
     use DateUtils;
 
     private User $user;
-    private JWTTokenManagerInterface $jwtManager;
+    private JwtManagerService $jwtManager;
     private UserPasswordEncoderInterface $passwordEncoder;
 
     public function __construct(
         UserPasswordEncoderInterface $passwordEncoder,
-        JWTTokenManagerInterface $jwtManager
+        JwtManagerService $jwtManager
     ) {
         $this->passwordEncoder = $passwordEncoder;
         $this->jwtManager = $jwtManager;

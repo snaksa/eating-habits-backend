@@ -69,13 +69,12 @@ class WeightController extends BaseController
 
         $weight = $this->weightRepository->findOneById($id);
         if (!$weight) {
-            $this->notFound("Weight with ID {$id} was not found!");
+            $this->notFound("Weight with ID {$id} was not found");
         }
 
         if ($weight->getUser()->getId() !== $this->authService->getCurrentUser()->getId()) {
             throw new Exception\NotAuthorizedException('You do not have permissions to access this resource');
         }
-
 
         return $this->item($weight);
     }
@@ -125,7 +124,7 @@ class WeightController extends BaseController
 
         $weight = $this->weightRepository->findOneById($id);
         if (!$weight) {
-            throw new Exception\EntityNotFoundException("Weight with ID {$id} was not found");
+            $this->notFound("Weight with ID {$id} was not found");
         }
 
         if ($weight->getUser()->getId() !== $this->authService->getCurrentUser()->getId()) {

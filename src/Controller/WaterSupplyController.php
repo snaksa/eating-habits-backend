@@ -97,14 +97,16 @@ class WaterSupplyController extends BaseController
 
         $startDate = $request->get('startDate', null);
         if (!$startDate) {
-            $startDate = $this->getCurrentDateTime()->modify('- 7 days');
+            $startDate = $this->getCurrentDateTime()->setTime(0, 0, 0)->modify('- 6 days');
         } else {
             $startDate = $this->createFromFormat($startDate);
         }
 
         $endDate = $request->get('endDate', null);
         if (!$endDate) {
-            $endDate = $this->getCurrentDateTime();
+            $time = $startDate->format('H:i:s');
+            $time = explode(':', $time);
+            $endDate = $this->getCurrentDateTime()->setTime($time[0], $time[1], $time[2]);
         } else {
             $endDate = $this->createFromFormat($endDate);
         }
@@ -159,7 +161,7 @@ class WaterSupplyController extends BaseController
 
         $waterSupply = $this->waterSupplyRepository->findOneById($id);
         if (!$waterSupply) {
-            $this->notFound("WaterSupply with ID {$id} was not found!");
+            $this->notFound("WaterSupply with ID {$id} was not found");
         }
 
         if ($waterSupply->getUser()->getId() !== $this->authService->getCurrentUser()->getId()) {
@@ -215,7 +217,7 @@ class WaterSupplyController extends BaseController
 
         $waterSupply = $this->waterSupplyRepository->findOneById($id);
         if (!$waterSupply) {
-            throw new Exception\EntityNotFoundException("WaterSupply with ID {$id} was not found");
+            $this->notFound("WaterSupply with ID {$id} was not found");
         }
 
         if ($waterSupply->getUser()->getId() !== $this->authService->getCurrentUser()->getId()) {

@@ -10,8 +10,8 @@ class UserTransformer extends TransformerAbstract
 {
     protected $availableIncludes = [
         'meals',
-        'waterSupply',
-        'weight'
+        'waterSupplies',
+        'weights'
     ];
 
     public function transform(User $user)
@@ -28,12 +28,12 @@ class UserTransformer extends TransformerAbstract
         return $this->collection($user->getMeals(), new MealTransformer());
     }
 
-    public function includeWaterSupply(User $user): Collection
+    public function includeWaterSupplies(User $user): Collection
     {
         return $this->collection($user->getWaterSupplies(), new WaterSupplyTransformer());
     }
 
-    public function includeWeight(User $user): Collection
+    public function includeWeights(User $user): Collection
     {
         return $this->collection($user->getWeights(), new WeightTransformer());
     }

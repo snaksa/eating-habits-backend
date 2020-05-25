@@ -8,6 +8,7 @@ parameters:
 services:
     # default configuration for services in *this* file
     _defaults:
+        public: true
         autowire: true      # Automatically injects dependencies in your services.
         autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
 
@@ -30,6 +31,8 @@ services:
         class: League\Fractal\Manager
     League\Fractal\Serializer\DataArraySerializer:
         class: League\Fractal\Serializer\DataArraySerializer
+    Symfony\Component\HttpFoundation\Request:
+        class: Symfony\Component\HttpFoundation\Request
 
     App\Request\RequestResolver:
         tags:

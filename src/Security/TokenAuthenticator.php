@@ -5,8 +5,8 @@ namespace App\Security;
 use App\Entity\User;
 use App\Exception\NotAuthenticatedException;
 use App\Repository\UserRepository;
+use App\Services\JwtManagerService;
 use App\Traits\DateUtils;
-use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Authentication\Token\PreAuthenticatedToken;
@@ -21,9 +21,9 @@ class TokenAuthenticator extends AbstractGuardAuthenticator
     use DateUtils;
 
     private UserRepository $userRepository;
-    private JWTTokenManagerInterface $jwtManager;
+    private JwtManagerService $jwtManager;
 
-    public function __construct(UserRepository $userRepository, JWTTokenManagerInterface $jwtManager)
+    public function __construct(UserRepository $userRepository, JwtManagerService $jwtManager)
     {
         $this->userRepository = $userRepository;
         $this->jwtManager = $jwtManager;

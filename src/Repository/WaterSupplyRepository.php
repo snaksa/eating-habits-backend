@@ -50,7 +50,7 @@ class WaterSupplyRepository extends ServiceEntityRepository
     public function findUserWaterSuppliesByDay(User $user, \DateTimeInterface $startDate, \DateTimeInterface $endDate)
     {
         return $this->createQueryBuilder('t')
-            ->where('t.user = :id AND t.date >= :startDate AND t.date <= :endDate')
+            ->where('t.user = :id AND t.date >= :startDate AND t.date < :endDate')
             ->setParameters([
                 'id' => $user->getId(),
                 'startDate' => $startDate,
