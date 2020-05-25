@@ -2,16 +2,18 @@
 
 namespace App\Tests\Feature\Controller;
 
+use App\Constant\MealTypes;
+use App\DataFixtures\MealFixtures;
 use App\DataFixtures\UserFixtures;
-use App\DataFixtures\WeightFixtures;
+use App\Entity\Meal;
 use App\Entity\User;
-use App\Entity\Weight;
+use App\Repository\MealRepository;
 use App\Repository\UserRepository;
 use App\Repository\WeightRepository;
 use App\Traits\DateUtils;
 use App\Tests\Feature\BaseTestCase;
 
-class WeightControllerTest extends BaseTestCase
+class MealControllerTest extends BaseTestCase
 {
     use DateUtils;
 
@@ -25,7 +27,7 @@ class WeightControllerTest extends BaseTestCase
 
         $this->fixtures = $this->loadFixtures([
             UserFixtures::class,
-            WeightFixtures::class
+            MealFixtures::class
         ])->getReferenceRepository();
 
         $this->user = $this->fixtures->getReference('user_demo');
@@ -34,14 +36,14 @@ class WeightControllerTest extends BaseTestCase
     /**
      * @test
      */
-    public function testWeightGetAll()
+    public function testMealGetAll()
     {
-        $weightRecords = $this->filterFixtures(function ($entity) {
-            return $entity instanceof Weight
+        $mealRecords = $this->filterFixtures(function ($entity) {
+            return $entity instanceof Meal
                 && $entity->getUser()->getId() === $this->user->getId();
         });
 
-        usort($weightRecords, function (Weight $a, Weight $b) {
+        usort($mealRecords, function (Meal $a, Meal $b) {
             return $a->getDate() < $b->getDate();
         });
 
@@ -49,24 +51,25 @@ class WeightControllerTest extends BaseTestCase
         $userRepositoryMock->expects($this->once())->method('findOneBy')->willReturn($this->user);
         $this->client->getContainer()->set(UserRepository::class, $userRepositoryMock);
 
-        $weightRepositoryMock = $this->createMock(WeightRepository::class);
-        $weightRepositoryMock->expects($this->once())->method('findUserWeights')->with($this->user)->willReturn($weightRecords);
-        $this->client->getContainer()->set(WeightRepository::class, $weightRepositoryMock);
+        $mealRepositoryMock = $this->createMock(MealRepository::class);
+        $mealRepositoryMock->expects($this->once())->method('findUserMeals')->with($this->user)->willReturn($mealRecords);
+        $this->client->getContainer()->set(MealRepository::class, $mealRepositoryMock);
 
         $this->login();
         $this->setCurrentUser($this->user);
 
-        $this->get('/weights');
+        $this->get('/meals');
         $content = $this->getContent();
 
         $expected = [
-            'data' => array_map(function (Weight $weight) {
+            'data' => array_map(function (Meal $meal) {
                 return [
-                    'id' => $weight->getId(),
-                    'weight' => $weight->getWeight(),
-                    'date' => $this->formatDate($weight->getDate())
+                    'id' => $meal->getId(),
+                    'date' => $this->formatDate($meal->getDate()),
+                    'type' => $meal->getType(),
+                    'description' => $meal->getDescription(),
                 ];
-            }, $weightRecords)
+            }, $mealRecords)
         ];
 
         $this->assertResponseStatusCode(200);
@@ -76,29 +79,30 @@ class WeightControllerTest extends BaseTestCase
     /**
      * @test
      */
-    public function testWeightGetSingle()
+    public function testMealGetSingle()
     {
-        $weightRecord = $this->fixtures->getReference('user_demo_weight_0_0');
+        $mealRecord = $this->fixtures->getReference('user_demo_meal_0_0');
 
         $userRepositoryMock = $this->createMock(UserRepository::class);
         $userRepositoryMock->expects($this->once())->method('findOneBy')->willReturn($this->user);
         $this->client->getContainer()->set(UserRepository::class, $userRepositoryMock);
 
-        $weightRepositoryMock = $this->createMock(WeightRepository::class);
-        $weightRepositoryMock->expects($this->once())->method('findOneById')->with($weightRecord->getId())->willReturn($weightRecord);
-        $this->client->getContainer()->set(WeightRepository::class, $weightRepositoryMock);
+        $mealRepositoryMock = $this->createMock(MealRepository::class);
+        $mealRepositoryMock->expects($this->once())->method('findOneById')->with($mealRecord->getId())->willReturn($mealRecord);
+        $this->client->getContainer()->set(MealRepository::class, $mealRepositoryMock);
 
         $this->login();
         $this->setCurrentUser($this->user);
 
-        $this->get("/weights/{$weightRecord->getId()}");
+        $this->get("/meals/{$mealRecord->getId()}");
         $content = $this->getContent();
 
         $expected = [
             'data' => [
-                'id' => $weightRecord->getId(),
-                'weight' => $weightRecord->getWeight(),
-                'date' => $this->formatDate($weightRecord->getDate())
+                'id' => $mealRecord->getId(),
+                'date' => $this->formatDate($mealRecord->getDate()),
+                'type' => $mealRecord->getType(),
+                'description' => $mealRecord->getDescription(),
             ]
         ];
 
@@ -109,34 +113,35 @@ class WeightControllerTest extends BaseTestCase
     /**
      * @test
      */
-    public function testWeightGetSingleWithUser()
+    public function testMealGetSingleWithUser()
     {
-        $weightRecord = $this->fixtures->getReference('user_demo_weight_0_0');
+        $mealRecord = $this->fixtures->getReference('user_demo_meal_0_0');
 
         $userRepositoryMock = $this->createMock(UserRepository::class);
         $userRepositoryMock->expects($this->once())->method('findOneBy')->willReturn($this->user);
         $this->client->getContainer()->set(UserRepository::class, $userRepositoryMock);
 
-        $weightRepositoryMock = $this->createMock(WeightRepository::class);
-        $weightRepositoryMock->expects($this->once())->method('findOneById')->with($weightRecord->getId())->willReturn($weightRecord);
-        $this->client->getContainer()->set(WeightRepository::class, $weightRepositoryMock);
+        $mealRepositoryMock = $this->createMock(MealRepository::class);
+        $mealRepositoryMock->expects($this->once())->method('findOneById')->with($mealRecord->getId())->willReturn($mealRecord);
+        $this->client->getContainer()->set(MealRepository::class, $mealRepositoryMock);
 
         $this->login();
         $this->setCurrentUser($this->user);
 
-        $this->get("/weights/{$weightRecord->getId()}?include=user");
+        $this->get("/meals/{$mealRecord->getId()}?include=user");
         $content = $this->getContent();
 
         $expected = [
             'data' => [
-                'id' => $weightRecord->getId(),
-                'weight' => $weightRecord->getWeight(),
-                'date' => $this->formatDate($weightRecord->getDate()),
+                'id' => $mealRecord->getId(),
+                'date' => $this->formatDate($mealRecord->getDate()),
+                'type' => $mealRecord->getType(),
+                'description' => $mealRecord->getDescription(),
                 'user' => [
                     'data' => [
-                        'id' => $weightRecord->getUser()->getId(),
-                        'username' => $weightRecord->getUser()->getUsername(),
-                        'name' => $weightRecord->getUser()->getName(),
+                        'id' => $mealRecord->getUser()->getId(),
+                        'username' => $mealRecord->getUser()->getUsername(),
+                        'name' => $mealRecord->getUser()->getName(),
                     ]
                 ]
             ]
@@ -149,24 +154,24 @@ class WeightControllerTest extends BaseTestCase
     /**
      * @test
      */
-    public function testWeightGetSingleNotFound()
+    public function testMealGetSingleNotFound()
     {
         $userRepositoryMock = $this->createMock(UserRepository::class);
         $userRepositoryMock->expects($this->once())->method('findOneBy')->willReturn($this->user);
         $this->client->getContainer()->set(UserRepository::class, $userRepositoryMock);
 
-        $weightRepositoryMock = $this->createMock(WeightRepository::class);
-        $weightRepositoryMock->expects($this->once())->method('findOneById')->with(0)->willReturn(null);
-        $this->client->getContainer()->set(WeightRepository::class, $weightRepositoryMock);
+        $mealRepositoryMock = $this->createMock(MealRepository::class);
+        $mealRepositoryMock->expects($this->once())->method('findOneById')->with(0)->willReturn(null);
+        $this->client->getContainer()->set(MealRepository::class, $mealRepositoryMock);
 
         $this->login();
-        $this->get("/weights/0");
+        $this->get("/meals/0");
         $content = $this->getContent();
 
         $expected = [
             'error' => [
                 'type' => 'EntityNotFoundException',
-                'message' => 'Weight with ID 0 was not found',
+                'message' => 'Meal with ID 0 was not found',
                 'status' => 404
             ]
         ];
@@ -178,22 +183,22 @@ class WeightControllerTest extends BaseTestCase
     /**
      * @test
      */
-    public function testWeightGetSingleNoPermission()
+    public function testMealGetSingleNoPermission()
     {
-        $weightRecord = $this->fixtures->getReference('user_demo_weight_1_0');
+        $mealRecord = $this->fixtures->getReference('user_demo_meal_1_0');
 
         $userRepositoryMock = $this->createMock(UserRepository::class);
         $userRepositoryMock->expects($this->once())->method('findOneBy')->willReturn($this->user);
         $this->client->getContainer()->set(UserRepository::class, $userRepositoryMock);
 
-        $weightRepositoryMock = $this->createMock(WeightRepository::class);
-        $weightRepositoryMock->expects($this->once())->method('findOneById')->with($weightRecord->getId())->willReturn($weightRecord);
-        $this->client->getContainer()->set(WeightRepository::class, $weightRepositoryMock);
+        $mealRepositoryMock = $this->createMock(MealRepository::class);
+        $mealRepositoryMock->expects($this->once())->method('findOneById')->with($mealRecord->getId())->willReturn($mealRecord);
+        $this->client->getContainer()->set(MealRepository::class, $mealRepositoryMock);
 
         $this->login();
         $this->setCurrentUser($this->user);
 
-        $this->get("/weights/{$weightRecord->getId()}");
+        $this->get("/meals/{$mealRecord->getId()}");
         $content = $this->getContent();
 
         $expected = [
@@ -211,7 +216,7 @@ class WeightControllerTest extends BaseTestCase
     /**
      * @test
      */
-    public function testWeightCreate()
+    public function testMealCreate()
     {
         $userRepositoryMock = $this->createMock(UserRepository::class);
         $userRepositoryMock->expects($this->once())->method('findOneBy')->willReturn($this->user);
@@ -221,18 +226,21 @@ class WeightControllerTest extends BaseTestCase
         $this->setCurrentUser($this->user);
 
         $this->post(
-            "/weights",
+            "/meals",
             [
                 'date' => '2020-02-02 12:12:12',
-                'weight' => 78
+                'type' => MealTypes::LUNCH,
+                'picture' => '/path',
+                'description' => 'test'
             ]
         );
         $content = $this->getContent();
 
         $expected = [
             'data' => [
-                'weight' => 78,
-                'date' => '2020-02-02 12:12:12Z'
+                'date' => '2020-02-02 12:12:12Z',
+                'type' => MealTypes::LUNCH,
+                'description' => 'test',
             ]
         ];
 
@@ -245,7 +253,7 @@ class WeightControllerTest extends BaseTestCase
     /**
      * @test
      */
-    public function testWeightCreateMissingDate()
+    public function testMealCreateMissingDate()
     {
         $userRepositoryMock = $this->createMock(UserRepository::class);
         $userRepositoryMock->expects($this->once())->method('findOneBy')->willReturn($this->user);
@@ -254,9 +262,9 @@ class WeightControllerTest extends BaseTestCase
         $this->login();
 
         $this->post(
-            "/weights",
+            "/meals",
             [
-                'weight' => 78
+                'type' => MealTypes::LUNCH
             ]
         );
         $content = $this->getContent();
@@ -278,7 +286,7 @@ class WeightControllerTest extends BaseTestCase
     /**
      * @test
      */
-    public function testWeightCreateInvalidDate()
+    public function testMealCreateInvalidDate()
     {
         $userRepositoryMock = $this->createMock(UserRepository::class);
         $userRepositoryMock->expects($this->once())->method('findOneBy')->willReturn($this->user);
@@ -287,10 +295,10 @@ class WeightControllerTest extends BaseTestCase
         $this->login();
 
         $this->post(
-            "/weights",
+            "/meals",
             [
                 'date' => '2020-02-02 12:12',
-                'weight' => 78
+                'type' => MealTypes::LUNCH
             ]
         );
         $content = $this->getContent();
@@ -310,7 +318,7 @@ class WeightControllerTest extends BaseTestCase
     /**
      * @test
      */
-    public function testWeightCreateMissingWeight()
+    public function testMealCreateMissingType()
     {
         $userRepositoryMock = $this->createMock(UserRepository::class);
         $userRepositoryMock->expects($this->once())->method('findOneBy')->willReturn($this->user);
@@ -319,7 +327,7 @@ class WeightControllerTest extends BaseTestCase
         $this->login();
 
         $this->post(
-            "/weights",
+            "/meals",
             [
                 'date' => '2020-02-02 12:12:12'
             ]
@@ -330,7 +338,7 @@ class WeightControllerTest extends BaseTestCase
             'error' => [
                 'type' => 'InvalidDataException',
                 'message' => [
-                    'Weight should not be blank'
+                    'Type should not be blank'
                 ],
                 'status' => 400
             ]
@@ -343,7 +351,7 @@ class WeightControllerTest extends BaseTestCase
     /**
      * @test
      */
-    public function testWeightCreateNegativeWeight()
+    public function testMealCreateInvalidMealType()
     {
         $userRepositoryMock = $this->createMock(UserRepository::class);
         $userRepositoryMock->expects($this->once())->method('findOneBy')->willReturn($this->user);
@@ -352,20 +360,18 @@ class WeightControllerTest extends BaseTestCase
         $this->login();
 
         $this->post(
-            "/weights",
+            "/meals",
             [
                 'date' => '2020-02-02 12:12',
-                'weight' => -10
+                'type' => -10
             ]
         );
         $content = $this->getContent();
 
         $expected = [
             'error' => [
-                'type' => 'InvalidDataException',
-                'message' => [
-                    'Weight should be a positive number'
-                ],
+                'type' => 'InvalidMealTypeException',
+                'message' => 'Meal Type -10 does not exist',
                 'status' => 400
             ]
         ];
@@ -377,36 +383,38 @@ class WeightControllerTest extends BaseTestCase
     /**
      * @test
      */
-    public function testWeightUpdate()
+    public function testMealUpdate()
     {
-        $weightRecord = $this->fixtures->getReference('user_demo_weight_0_0');
+        $mealRecord = $this->fixtures->getReference('user_demo_meal_0_0');
 
         $userRepositoryMock = $this->createMock(UserRepository::class);
         $userRepositoryMock->expects($this->once())->method('findOneBy')->willReturn($this->user);
         $this->client->getContainer()->set(UserRepository::class, $userRepositoryMock);
 
-        $weightRepositoryMock = $this->createMock(WeightRepository::class);
-        $weightRepositoryMock->expects($this->once())->method('findOneById')->with($weightRecord->getId())->willReturn($weightRecord);
-        $weightRepositoryMock->expects($this->once())->method('save')->willReturn(null);
-        $this->client->getContainer()->set(WeightRepository::class, $weightRepositoryMock);
+        $mealRepositoryMock = $this->createMock(MealRepository::class);
+        $mealRepositoryMock->expects($this->once())->method('findOneById')->with($mealRecord->getId())->willReturn($mealRecord);
+        $mealRepositoryMock->expects($this->once())->method('save')->willReturn(null);
+        $this->client->getContainer()->set(MealRepository::class, $mealRepositoryMock);
 
         $this->login();
         $this->setCurrentUser($this->user);
 
         $this->post(
-            "/weights/{$weightRecord->getId()}",
+            "/meals/{$mealRecord->getId()}",
             [
                 'date' => '2020-02-02 12:12:12',
-                'weight' => 78
+                'type' => MealTypes::BREAKFAST,
+                'description' => 'test-desc'
             ]
         );
         $content = $this->getContent();
 
         $expected = [
             'data' => [
-                'id' => $weightRecord->getId(),
-                'weight' => 78,
-                'date' => '2020-02-02 12:12:12Z'
+                'id' => $mealRecord->getId(),
+                'type' => MealTypes::BREAKFAST,
+                'date' => '2020-02-02 12:12:12Z',
+                'description' => 'test-desc',
             ]
         ];
 
@@ -417,23 +425,22 @@ class WeightControllerTest extends BaseTestCase
     /**
      * @test
      */
-    public function testWeightUpdateNotFound()
+    public function testMealUpdateNotFound()
     {
         $userRepositoryMock = $this->createMock(UserRepository::class);
         $userRepositoryMock->expects($this->once())->method('findOneBy')->willReturn($this->user);
         $this->client->getContainer()->set(UserRepository::class, $userRepositoryMock);
 
-        $weightRepositoryMock = $this->createMock(WeightRepository::class);
-        $weightRepositoryMock->expects($this->once())->method('findOneById')->with(0)->willReturn(null);
-        $this->client->getContainer()->set(WeightRepository::class, $weightRepositoryMock);
+        $mealRepositoryMock = $this->createMock(MealRepository::class);
+        $mealRepositoryMock->expects($this->once())->method('findOneById')->with(0)->willReturn(null);
+        $this->client->getContainer()->set(MealRepository::class, $mealRepositoryMock);
 
         $this->login();
 
         $this->post(
-            "/weights/0",
+            "/meals/0",
             [
-                'date' => '2020-02-02 12:12:12',
-                'weight' => 78
+                'date' => '2020-02-02 12:12:12'
             ]
         );
         $content = $this->getContent();
@@ -441,7 +448,7 @@ class WeightControllerTest extends BaseTestCase
         $expected = [
             'error' => [
                 'type' => 'EntityNotFoundException',
-                'message' => 'Weight with ID 0 was not found',
+                'message' => 'Meal with ID 0 was not found',
                 'status' => 404
             ]
         ];
@@ -453,26 +460,25 @@ class WeightControllerTest extends BaseTestCase
     /**
      * @test
      */
-    public function testWeightUpdateNoPermission()
+    public function testMealUpdateNoPermission()
     {
-        $weightRecord = $this->fixtures->getReference('user_demo_weight_1_0');
+        $mealRecord = $this->fixtures->getReference('user_demo_meal_1_0');
 
         $userRepositoryMock = $this->createMock(UserRepository::class);
         $userRepositoryMock->expects($this->once())->method('findOneBy')->willReturn($this->user);
         $this->client->getContainer()->set(UserRepository::class, $userRepositoryMock);
 
-        $weightRepositoryMock = $this->createMock(WeightRepository::class);
-        $weightRepositoryMock->expects($this->once())->method('findOneById')->with($weightRecord->getId())->willReturn($weightRecord);
-        $this->client->getContainer()->set(WeightRepository::class, $weightRepositoryMock);
+        $mealRepositoryMock = $this->createMock(MealRepository::class);
+        $mealRepositoryMock->expects($this->once())->method('findOneById')->with($mealRecord->getId())->willReturn($mealRecord);
+        $this->client->getContainer()->set(MealRepository::class, $mealRepositoryMock);
 
         $this->login();
         $this->setCurrentUser($this->user);
 
         $this->post(
-            "/weights/{$weightRecord->getId()}",
+            "/meals/{$mealRecord->getId()}",
             [
-                'date' => '2020-02-02 12:12:12',
-                'weight' => 78
+                'date' => '2020-02-02 12:12:12'
             ]
         );
         $content = $this->getContent();
@@ -492,9 +498,9 @@ class WeightControllerTest extends BaseTestCase
     /**
      * @test
      */
-    public function testWeightUpdateNegativeWeight()
+    public function testMealUpdateInvalidMealType()
     {
-        $weightRecord = $this->fixtures->getReference('user_demo_weight_0_0');
+        $mealRecord = $this->fixtures->getReference('user_demo_meal_0_0');
 
         $userRepositoryMock = $this->createMock(UserRepository::class);
         $userRepositoryMock->expects($this->once())->method('findOneBy')->willReturn($this->user);
@@ -503,20 +509,18 @@ class WeightControllerTest extends BaseTestCase
         $this->login();
 
         $this->post(
-            "/weights/{$weightRecord->getId()}",
+            "/meals/{$mealRecord->getId()}",
             [
                 'date' => '2020-02-02 12:12',
-                'weight' => -10
+                'type' => -10
             ]
         );
         $content = $this->getContent();
 
         $expected = [
             'error' => [
-                'type' => 'InvalidDataException',
-                'message' => [
-                    'Weight should be a positive number'
-                ],
+                'type' => 'InvalidMealTypeException',
+                'message' => 'Meal Type -10 does not exist',
                 'status' => 400
             ]
         ];
@@ -528,22 +532,22 @@ class WeightControllerTest extends BaseTestCase
     /**
      * @test
      */
-    public function testWeightUpdateInvalidDate()
+    public function testMealUpdateInvalidDate()
     {
-        $weightRecord = $this->fixtures->getReference('user_demo_weight_0_0');
+        $mealRecord = $this->fixtures->getReference('user_demo_meal_0_0');
 
         $userRepositoryMock = $this->createMock(UserRepository::class);
         $userRepositoryMock->expects($this->once())->method('findOneBy')->willReturn($this->user);
         $this->client->getContainer()->set(UserRepository::class, $userRepositoryMock);
 
-        $weightRepositoryMock = $this->createMock(WeightRepository::class);
-        $weightRepositoryMock->expects($this->once())->method('findOneById')->with($weightRecord->getId())->willReturn($weightRecord);
-        $this->client->getContainer()->set(WeightRepository::class, $weightRepositoryMock);
+        $mealRepositoryMock = $this->createMock(MealRepository::class);
+        $mealRepositoryMock->expects($this->once())->method('findOneById')->with($mealRecord->getId())->willReturn($mealRecord);
+        $this->client->getContainer()->set(MealRepository::class, $mealRepositoryMock);
 
         $this->login();
 
         $this->post(
-            "/weights/{$weightRecord->getId()}",
+            "/meals/{$mealRecord->getId()}",
             [
                 'date' => '2020-02-02 12:12',
                 'weight' => 78
@@ -566,33 +570,34 @@ class WeightControllerTest extends BaseTestCase
     /**
      * @test
      */
-    public function testWeightDelete()
+    public function testMealDelete()
     {
-        $weightRecord = $this->fixtures->getReference('user_demo_weight_0_0');
+        $mealRecord = $this->fixtures->getReference('user_demo_meal_0_0');
 
         $userRepositoryMock = $this->createMock(UserRepository::class);
         $userRepositoryMock->expects($this->once())->method('findOneBy')->willReturn($this->user);
         $this->client->getContainer()->set(UserRepository::class, $userRepositoryMock);
 
-        $weightRepositoryMock = $this->createMock(WeightRepository::class);
-        $weightRepositoryMock->expects($this->once())->method('findOneById')->with($weightRecord->getId())->willReturn($weightRecord);
-        $weightRepositoryMock->expects($this->once())->method('remove')->willReturn(null);
-        $this->client->getContainer()->set(WeightRepository::class, $weightRepositoryMock);
+        $mealRepositoryMock = $this->createMock(MealRepository::class);
+        $mealRepositoryMock->expects($this->once())->method('findOneById')->with($mealRecord->getId())->willReturn($mealRecord);
+        $mealRepositoryMock->expects($this->once())->method('remove')->willReturn(null);
+        $this->client->getContainer()->set(MealRepository::class, $mealRepositoryMock);
 
 
         $this->login();
         $this->setCurrentUser($this->user);
 
-        $id = $weightRecord->getId();
+        $id = $mealRecord->getId();
 
-        $this->delete("/weights/{$id}");
+        $this->delete("/meals/{$id}");
         $content = $this->getContent();
 
         $expected = [
             'data' => [
-                'id' => $id,
-                'weight' => $weightRecord->getWeight(),
-                'date' => $this->formatDate($weightRecord->getDate())
+                'id' => $mealRecord->getId(),
+                'type' => $mealRecord->getType(),
+                'date' => $this->formatDate($mealRecord->getDate()),
+                'description' => $mealRecord->getDescription(),
             ]
         ];
 
@@ -603,26 +608,26 @@ class WeightControllerTest extends BaseTestCase
     /**
      * @test
      */
-    public function testWeightDeleteNotFound()
+    public function testMealDeleteNotFound()
     {
         $userRepositoryMock = $this->createMock(UserRepository::class);
         $userRepositoryMock->expects($this->once())->method('findOneBy')->willReturn($this->user);
         $this->client->getContainer()->set(UserRepository::class, $userRepositoryMock);
 
 
-        $weightRepositoryMock = $this->createMock(WeightRepository::class);
-        $weightRepositoryMock->expects($this->once())->method('findOneById')->with(0)->willReturn(null);
-        $this->client->getContainer()->set(WeightRepository::class, $weightRepositoryMock);
+        $mealRepositoryMock = $this->createMock(MealRepository::class);
+        $mealRepositoryMock->expects($this->once())->method('findOneById')->with(0)->willReturn(null);
+        $this->client->getContainer()->set(MealRepository::class, $mealRepositoryMock);
 
         $this->login();
 
-        $this->delete("/weights/0");
+        $this->delete("/meals/0");
         $content = $this->getContent();
 
         $expected = [
             'error' => [
                 'type' => 'EntityNotFoundException',
-                'message' => 'Weight with ID 0 was not found',
+                'message' => 'Meal with ID 0 was not found',
                 'status' => 400
             ]
         ];
@@ -634,23 +639,23 @@ class WeightControllerTest extends BaseTestCase
     /**
      * @test
      */
-    public function testWeightDeleteNoPermission()
+    public function testMealDeleteNoPermission()
     {
-        $weightRecord = $this->fixtures->getReference('user_demo_weight_1_0');
+        $mealRecord = $this->fixtures->getReference('user_demo_meal_1_0');
 
         $userRepositoryMock = $this->createMock(UserRepository::class);
         $userRepositoryMock->expects($this->once())->method('findOneBy')->willReturn($this->user);
         $this->client->getContainer()->set(UserRepository::class, $userRepositoryMock);
 
 
-        $weightRepositoryMock = $this->createMock(WeightRepository::class);
-        $weightRepositoryMock->expects($this->once())->method('findOneById')->with($weightRecord->getId())->willReturn($weightRecord);
-        $this->client->getContainer()->set(WeightRepository::class, $weightRepositoryMock);
+        $mealRepositoryMock = $this->createMock(MealRepository::class);
+        $mealRepositoryMock->expects($this->once())->method('findOneById')->with($mealRecord->getId())->willReturn($mealRecord);
+        $this->client->getContainer()->set(MealRepository::class, $mealRepositoryMock);
 
         $this->login();
         $this->setCurrentUser($this->user);
 
-        $this->delete("/weights/{$weightRecord->getId()}");
+        $this->delete("/meals/{$mealRecord->getId()}");
         $content = $this->getContent();
 
         $expected = [

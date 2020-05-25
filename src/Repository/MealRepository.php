@@ -42,6 +42,7 @@ class MealRepository extends ServiceEntityRepository
         return $this->createQueryBuilder('t')
             ->where('t.user = :id')
             ->setParameters(['id' => $user])
+            ->orderBy('t.date', 'ASC')
             ->getQuery()
             ->getResult();
     }

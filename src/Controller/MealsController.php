@@ -69,7 +69,7 @@ class MealsController extends BaseController
 
         $meal = $this->mealRepository->findOneById($id);
         if (!$meal) {
-            $this->notFound("Meal with ID {$id} was not found!");
+            $this->notFound("Meal with ID {$id} was not found");
         }
 
         if ($meal->getUser()->getId() !== $this->authService->getCurrentUser()->getId()) {
@@ -86,7 +86,6 @@ class MealsController extends BaseController
      * @return JsonResponse
      * @throws ORM\ORMException
      * @throws ORM\OptimisticLockException
-     * @throws Exception\EntityNotFoundException
      * @throws Exception\InvalidDateException
      * @throws Exception\InvalidMealTypeException
      * @throws Exception\NotAuthenticatedException
@@ -127,7 +126,7 @@ class MealsController extends BaseController
 
         $meal = $this->mealRepository->findOneById($id);
         if (!$meal) {
-            throw new Exception\EntityNotFoundException("Meal with ID {$id} was not found");
+            $this->notFound("Meal with ID {$id} was not found");
         }
 
         if ($meal->getUser()->getId() !== $this->authService->getCurrentUser()->getId()) {
