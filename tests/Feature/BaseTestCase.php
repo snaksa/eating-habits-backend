@@ -65,14 +65,14 @@ class BaseTestCase extends WebTestCase
         );
     }
 
-    protected function post(string $url, array $content)
+    protected function post(string $url, array $content, bool $skipAuth = false)
     {
         $this->client->request(
             'POST',
             $url,
             [],
             [],
-            ['HTTP_Authorization' => 'token'],
+            ['HTTP_Authorization' => $skipAuth ? null : 'token'],
             json_encode($content)
         );
     }

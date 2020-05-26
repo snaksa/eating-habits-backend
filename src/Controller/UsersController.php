@@ -45,10 +45,16 @@ class UsersController extends BaseController
      * @throws Exception\PasswordConfirmationException
      * @throws ORM\ORMException
      * @throws ORM\OptimisticLockException
+     * @throws Exception\UserAlreadyExistsException
      */
     public function register(CreateUserRequest $request)
     {
         $this->setRequest($request->getRequest());
+
+        $user = $this->userRepository->findOneBy(['username' => $request->username]);
+        if ($user) {
+            throw new Exception\UserAlreadyExistsException('User with this email already exists');
+        }
 
         $user = $this->builder
             ->create()
@@ -113,12 +119,14 @@ class UsersController extends BaseController
     {
         $this->setRequest($request->getRequest());
 
-        if ($id !== $this->authService->getCurrentUser()->getId()) {
+        $currentUser = $this->authService->getCurrentUser();
+
+        if ($id !== $currentUser->getId()) {
             throw new Exception\NotAuthorizedException('You do not have permissions to access this resource');
         }
 
         $user = $this->builder
-            ->setUser($this->authService->getCurrentUser())
+            ->setUser($currentUser)
             ->bind($request)
             ->build();
 
