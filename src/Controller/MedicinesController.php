@@ -2,34 +2,37 @@
 
 namespace App\Controller;
 
-use App\Builder\MealBuilder;
+use App\Builder\MedicineBuilder;
 use App\Exception;
-use App\Repository\MealRepository;
-use App\Request\Meal\CreateMealRequest;
-use App\Request\Meal\UpdateMealRequest;
+use App\Repository\MedicineRepository;
+use App\Request\Medicine\CreateMedicineRequest;
+use App\Request\Medicine\UpdateMedicineRequest;
 use App\Services\AuthorizationService;
 use App\Services\FractalManager;
-use App\Transformers\MealTransformer;
+use App\Traits\DateUtils;
+use App\Transformers\MedicineTransformer;
 use Doctrine\ORM;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 
-class MealsController extends BaseController
+class MedicinesController extends BaseController
 {
-    protected string $transformerClass = MealTransformer::class;
-    private MealRepository $mealRepository;
-    private MealBuilder $builder;
+    use DateUtils;
+
+    protected string $transformerClass = MedicineTransformer::class;
+    private MedicineRepository $medicineRepository;
+    private MedicineBuilder $builder;
     private AuthorizationService $authService;
 
     public function __construct(
-        MealRepository $mealRepository,
-        MealBuilder $builder,
+        MedicineRepository $medicineRepository,
+        MedicineBuilder $builder,
         AuthorizationService $authService,
         FractalManager $fractalManager
     ) {
-        $this->mealRepository = $mealRepository;
+        $this->medicineRepository = $medicineRepository;
         $this->builder = $builder;
         $this->authService = $authService;
 
@@ -38,7 +41,7 @@ class MealsController extends BaseController
 
     /**
      * @IsGranted("ROLE_USER")
-     * @Route("/meals", methods={"GET"})
+     * @Route("/medicines", methods={"GET"})
      * @param Request $request
      * @return JsonResponse
      * @throws Exception\NotAuthenticatedException
@@ -47,14 +50,14 @@ class MealsController extends BaseController
     {
         $this->setRequest($request);
 
-        $meals = $this->mealRepository->findUserMeals($this->authService->getCurrentUser());
+        $medicines = $this->medicineRepository->findUserMedicines($this->authService->getCurrentUser());
 
-        return $this->collection($meals);
+        return $this->collection($medicines);
     }
 
     /**
      * @IsGranted("ROLE_USER")
-     * @Route("/meals/{id}", methods={"GET"})
+     * @Route("/medicines/{id}", methods={"GET"})
      * @param Request $request
      * @param int $id
      * @return JsonResponse
@@ -67,85 +70,85 @@ class MealsController extends BaseController
     {
         $this->setRequest($request);
 
-        $meal = $this->mealRepository->findOneById($id);
-        if (!$meal) {
-            $this->notFound("Meal with ID {$id} was not found");
+        $medicine = $this->medicineRepository->findOneById($id);
+        if (!$medicine) {
+            $this->notFound("Medicine with ID {$id} was not found");
         }
 
-        if ($meal->getUser()->getId() !== $this->authService->getCurrentUser()->getId()) {
+        if ($medicine->getUser()->getId() !== $this->authService->getCurrentUser()->getId()) {
             throw new Exception\NotAuthorizedException('You do not have permissions to access this resource');
         }
 
-        return $this->item($meal);
+        return $this->item($medicine);
     }
 
     /**
      * @IsGranted("ROLE_USER")
-     * @Route("/meals", methods={"POST"})
-     * @param CreateMealRequest $request
+     * @Route("/medicines", methods={"POST"})
+     * @param CreateMedicineRequest $request
      * @return JsonResponse
      * @throws ORM\ORMException
      * @throws ORM\OptimisticLockException
      * @throws Exception\InvalidDateException
-     * @throws Exception\InvalidMealTypeException
      * @throws Exception\NotAuthenticatedException
+     * @throws Exception\InvalidMedicineFrequencyException
      */
-    public function create(CreateMealRequest $request)
+    public function create(CreateMedicineRequest $request)
     {
         $this->setRequest($request->getRequest());
 
-        $meal = $this->builder
+        $medicine = $this->builder
             ->create()
             ->bind($request)
             ->setUser($this->authService->getCurrentUser())
             ->build();
 
-        $this->mealRepository->save($meal);
+        $this->medicineRepository->save($medicine);
 
-        return $this->item($meal);
+        return $this->item($medicine);
     }
 
     /**
      * @IsGranted("ROLE_USER")
-     * @Route("/meals/{id}", methods={"POST"})
-     * @param UpdateMealRequest $request
+     * @Route("/medicines/{id}", methods={"POST"})
+     * @param UpdateMedicineRequest $request
      * @param int $id
      * @return JsonResponse
      * @throws Exception\EntityNotFoundException
      * @throws Exception\InvalidDateException
-     * @throws Exception\InvalidMealTypeException
      * @throws ORM\NonUniqueResultException
      * @throws ORM\ORMException
      * @throws ORM\OptimisticLockException
      * @throws Exception\NotAuthorizedException
      * @throws Exception\NotAuthenticatedException
+     * @throws Exception\InvalidMedicineFrequencyException
      */
-    public function update(UpdateMealRequest $request, int $id)
+    public function update(UpdateMedicineRequest $request, int $id)
     {
         $this->setRequest($request->getRequest());
 
-        $meal = $this->mealRepository->findOneById($id);
-        if (!$meal) {
-            $this->notFound("Meal with ID {$id} was not found");
+        $medicine = $this->medicineRepository->findOneById($id);
+        if (!$medicine) {
+            $this->notFound("Medicine with ID {$id} was not found");
         }
 
-        if ($meal->getUser()->getId() !== $this->authService->getCurrentUser()->getId()) {
+        if ($medicine->getUser()->getId() !== $this->authService->getCurrentUser()->getId()) {
             throw new Exception\NotAuthorizedException('You do not have permissions to access this resource');
         }
 
-        $meal = $this->builder
-            ->setMeal($meal)
+        $medicine = $this->builder
+            ->setMedicine($medicine)
             ->bind($request)
             ->build();
 
-        $this->mealRepository->save($meal);
+        $this->medicineRepository->save($medicine);
 
-        return $this->item($meal);
+        return $this->item($medicine);
     }
 
     /**
      * @IsGranted("ROLE_USER")
-     * @Route("/meals/{id}", methods={"DELETE"})
+     * @Route("/medicines/{id}", methods={"DELETE"})
      * @param int $id
      * @return JsonResponse
      * @throws Exception\EntityNotFoundException
@@ -157,18 +160,18 @@ class MealsController extends BaseController
      */
     public function delete(int $id)
     {
-        $meal = $this->mealRepository->findOneById($id);
-        if (!$meal) {
-            throw new Exception\EntityNotFoundException("Meal with ID {$id} was not found");
+        $medicine = $this->medicineRepository->findOneById($id);
+        if (!$medicine) {
+            throw new Exception\EntityNotFoundException("Medicine with ID {$id} was not found");
         }
 
-        if ($meal->getUser()->getId() !== $this->authService->getCurrentUser()->getId()) {
+        if ($medicine->getUser()->getId() !== $this->authService->getCurrentUser()->getId()) {
             throw new Exception\NotAuthorizedException('You do not have permissions to access this resource');
         }
 
-        $clone = clone $meal;
+        $clone = clone $medicine;
 
-        $this->mealRepository->remove($meal);
+        $this->medicineRepository->remove($medicine);
 
         return $this->item($clone);
     }

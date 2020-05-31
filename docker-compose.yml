@@ -13,7 +13,7 @@ services:
       MYSQL_USER: symfony
       MYSQL_PASSWORD: symfony
   php:
-    image: snaksa/eating-habits-backend
+    image: snaksa/eating-habits-backend:mvp
     build:
       context: .
     container_name: eating-habits-backend-php
