@@ -7,11 +7,6 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 class UpdateMedicineScheduleRequest extends BaseRequest
 {
-    /**
-     * @Assert\NotBlank(message="medicineScheduleId should not be blank")
-     */
-    public int $medicineScheduleId;
-
     public ?int $periodSpan = null;
     public ?string $intakeTime = null;
 }

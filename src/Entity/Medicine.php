@@ -100,13 +100,6 @@ class Medicine
         return $this;
     }
 
-    public function setStartDate(\DateTimeInterface $start_date): self
-    {
-        $this->start_date = $start_date;
-
-        return $this;
-    }
-
     public function getUser(): ?User
     {
         return $this->user;
@@ -141,10 +134,6 @@ class Medicine
     {
         if ($this->schedule->contains($schedule)) {
             $this->schedule->removeElement($schedule);
-            // set the owning side to null (unless already changed)
-            if ($schedule->getMedicine() === $this) {
-                $schedule->setMedicine(null);
-            }
         }
 
         return $this;

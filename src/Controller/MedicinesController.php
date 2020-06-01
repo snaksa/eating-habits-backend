@@ -89,7 +89,6 @@ class MedicinesController extends BaseController
      * @return JsonResponse
      * @throws ORM\ORMException
      * @throws ORM\OptimisticLockException
-     * @throws Exception\InvalidDateException
      * @throws Exception\NotAuthenticatedException
      * @throws Exception\InvalidMedicineFrequencyException
      */
@@ -115,7 +114,6 @@ class MedicinesController extends BaseController
      * @param int $id
      * @return JsonResponse
      * @throws Exception\EntityNotFoundException
-     * @throws Exception\InvalidDateException
      * @throws ORM\NonUniqueResultException
      * @throws ORM\ORMException
      * @throws ORM\OptimisticLockException

@@ -5,7 +5,6 @@ namespace App\Builder;
 use App\Constant\MedicineFrequencies;
 use App\Entity\Medicine;
 use App\Entity\User;
-use App\Exception\InvalidDateException;
 use App\Exception\InvalidMedicineFrequencyException;
 use App\Request\Medicine\CreateMedicineRequest;
 use App\Request\Medicine\UpdateMedicineRequest;
@@ -27,7 +26,6 @@ class MedicineBuilder extends BaseBuilder
     /**
      * @param CreateMedicineRequest|UpdateMedicineRequest $input
      * @return $this
-     * @throws InvalidDateException
      * @throws InvalidMedicineFrequencyException
      */
     public function bind($input): self

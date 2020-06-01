@@ -116,10 +116,6 @@ class MedicineSchedule
     {
         if ($this->intakes->contains($intake)) {
             $this->intakes->removeElement($intake);
-            // set the owning side to null (unless already changed)
-            if ($intake->getMedicineSchedule() === $this) {
-                $intake->setMedicineSchedule(null);
-            }
         }
 
         return $this;

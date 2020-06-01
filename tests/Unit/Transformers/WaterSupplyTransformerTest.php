@@ -33,10 +33,10 @@ class WaterSupplyTransformerTest extends TestCase
     public function testIncludeUser()
     {
         $user = (new User())->setId(1)->setName('John Doe')->setUsername('test@gmail.com');
-        $weight = new WaterSupply();
-        $weight->setUser($user);
+        $waterSupply = new WaterSupply();
+        $waterSupply->setUser($user);
 
         $transformer = new WaterSupplyTransformer();
-        $this->assertEquals($user, $transformer->includeUser($weight)->getData());
+        $this->assertEquals($user, $transformer->includeUser($waterSupply)->getData());
     }
 }

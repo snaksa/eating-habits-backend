@@ -53,7 +53,7 @@ class MedicineScheduleBuilder extends BaseBuilder
             $this->setPeriodSpan($input->periodSpan);
         }
 
-        if ($input->medicineId !== null) {
+        if (property_exists($input, 'medicineId') && $input->medicineId !== null) {
             $medicine = $this->findEntity($input->medicineId, $this->medicineRepository);
             if (!$medicine) {
                 throw new InvalidDataException("Medicine with ID {$input->medicineId} does not exist");

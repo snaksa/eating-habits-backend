@@ -52,7 +52,7 @@ class MedicineIntakeBuilder extends BaseBuilder
             $this->setDate($date);
         }
 
-        if ($input->medicineScheduleId !== null) {
+        if (property_exists($input, 'medicineScheduleId') && $input->medicineScheduleId !== null) {
             $medicine = $this->findEntity($input->medicineScheduleId, $this->medicineScheduleRepository);
             if (!$medicine) {
                 throw new InvalidDataException(
@@ -73,13 +73,6 @@ class MedicineIntakeBuilder extends BaseBuilder
         if ($existingRecord) {
             throw new InvalidDataException("Intake record already exists");
         }
-
-        return $this;
-    }
-
-    public function setMedicineIntake(MedicineIntake $medicineIntake): self
-    {
-        $this->medicineIntake = $medicineIntake;
 
         return $this;
     }

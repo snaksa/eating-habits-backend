@@ -22,9 +22,7 @@ class MedicineScheduleTransformer extends TransformerAbstract
     {
         return [
             'id' => $medicineSchedule->getId(),
-            'intakeTime' => $medicineSchedule->getIntakeTime()
-                ? $this->formatDate($medicineSchedule->getIntakeTime())
-                : null,
+            'intakeTime' => $this->formatDate($medicineSchedule->getIntakeTime()),
             'periodSpan' => $medicineSchedule->getPeriodSpan()
         ];
     }
