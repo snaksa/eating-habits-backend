@@ -3,7 +3,11 @@
 namespace App\Repository;
 
 use App\Entity\MedicineIntake;
+use App\Entity\MedicineSchedule;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\NonUniqueResultException;
+use Doctrine\ORM\OptimisticLockException;
+use Doctrine\ORM\ORMException;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -19,32 +23,55 @@ class MedicineIntakeRepository extends ServiceEntityRepository
         parent::__construct($registry, MedicineIntake::class);
     }
 
-    // /**
-    //  * @return MedicineIntake[] Returns an array of MedicineIntake objects
-    //  */
-    /*
-    public function findByExampleField($value)
+    /**
+     * @param int $id
+     * @return MedicineIntake|null
+     * @throws NonUniqueResultException
+     */
+    public function findOneById(int $id): ?MedicineIntake
     {
-        return $this->createQueryBuilder('m')
-            ->andWhere('m.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('m.id', 'ASC')
-            ->setMaxResults(10)
+        return $this->createQueryBuilder('t')
+            ->where('t.id = :id')
+            ->setParameters(['id' => $id])
             ->getQuery()
-            ->getResult()
-        ;
+            ->getOneOrNullResult();
     }
-    */
 
-    /*
-    public function findOneBySomeField($value): ?MedicineIntake
-    {
-        return $this->createQueryBuilder('m')
-            ->andWhere('m.exampleField = :val')
-            ->setParameter('val', $value)
+    public function findExistingIntake(
+        MedicineSchedule $medicineSchedule,
+        \DateTimeInterface $startDate,
+        \DateTimeInterface $endDate
+    ) {
+        return $this->createQueryBuilder('t')
+            ->where('t.medicineSchedule = :id AND t.date >= :startDate AND t.date < :endDate')
+            ->setParameters([
+                'id' => $medicineSchedule->getId(),
+                'startDate' => $startDate,
+                'endDate' => $endDate
+            ])
             ->getQuery()
-            ->getOneOrNullResult()
-        ;
+            ->getResult();
     }
-    */
+
+    /**
+     * @param MedicineIntake $medicineIntake
+     * @throws ORMException
+     * @throws OptimisticLockException
+     */
+    public function save(MedicineIntake $medicineIntake)
+    {
+        $this->_em->persist($medicineIntake);
+        $this->_em->flush();
+    }
+
+    /**
+     * @param MedicineIntake $medicineIntake
+     * @throws ORMException
+     * @throws OptimisticLockException
+     */
+    public function remove(MedicineIntake $medicineIntake)
+    {
+        $this->_em->remove($medicineIntake);
+        $this->_em->flush();
+    }
 }

@@ -56,7 +56,7 @@ class MedicineScheduleBuilder extends BaseBuilder
         if ($input->medicineId !== null) {
             $medicine = $this->findEntity($input->medicineId, $this->medicineRepository);
             if (!$medicine) {
-                throw new InvalidDateException("Medicine with ID {$input->medicineId} does not exist");
+                throw new InvalidDataException("Medicine with ID {$input->medicineId} does not exist");
             }
 
             $this->setMedicine($medicine);
