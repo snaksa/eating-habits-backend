@@ -29,7 +29,7 @@ class MedicineScheduleFixtures extends Fixture implements DependentFixtureInterf
         $this->setReference("user_demo_medicine_schedule_2", $medicineSchedule);
 
         $medicineSchedule = new MedicineSchedule();
-        $medicineSchedule->setIntakeTime((clone $date)->modify('- 1 day'));
+        $medicineSchedule->setIntakeTime((clone $date)->modify('- 5 days'));
         $medicineSchedule->setPeriodSpan(24*60*60); // one day
         $medicineSchedule->setMedicine($this->getReference("user_demo_medicine_3"));
         $manager->persist($medicineSchedule);

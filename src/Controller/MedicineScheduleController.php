@@ -81,6 +81,7 @@ class MedicineScheduleController extends BaseController
                     $scheduledMedicines[] = $period;
                     break;
                 }
+
                 $medicineStartDate->add(new \DateInterval("PT{$period->getPeriodSpan()}S"));
             }
         }

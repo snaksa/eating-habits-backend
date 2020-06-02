@@ -26,17 +26,6 @@ class AuthorizationService
     }
 
     /**
-     * @return bool
-     * @throws NotAuthenticatedException
-     */
-    public function isLoggedIn(): bool
-    {
-        $isLoggedIn = $this->getCurrentUser()->getId() != '';
-
-        return true;
-    }
-
-    /**
      * @return User
      * @throws NotAuthenticatedException
      */
