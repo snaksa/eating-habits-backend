@@ -33,6 +33,6 @@ class MedicineTransformer extends TransformerAbstract
 
     public function includeSchedule(Medicine $medicine): Collection
     {
-        return $this->collection($medicine->getSchedule(), new UserTransformer());
+        return $this->collection($medicine->getSchedule(), new MedicineScheduleTransformer());
     }
 }

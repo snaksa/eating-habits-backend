@@ -139,10 +139,12 @@ class MedicineScheduleControllerTest extends BaseTestCase
         $this->get("/medicines-schedule/byDay?date={$startDate->format('Y-m-d H:i:s')}");
         $content = $this->getContent();
 
+        $today = explode('-', $this->getCurrentDateTime()->format('Y-m-d'));
         foreach ($fixtureMedicineSchedulesPeriod as $period) {
             $medicineStartDate = $period->getIntakeTime();
             while ($medicineStartDate < $endDate) {
                 if ($startDate <= $medicineStartDate) {
+                    $medicineStartDate->setDate($today[0], $today[1], $today[2]);
                     $period->setIntakeTime($medicineStartDate);
                     $scheduledMedicines[] = $period;
                     break;

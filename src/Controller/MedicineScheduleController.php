@@ -86,6 +86,13 @@ class MedicineScheduleController extends BaseController
             }
         }
 
+        $today = explode('-', $this->getCurrentDateTime()->format('Y-m-d'));
+        foreach ($scheduledMedicines as $key => $scheduledMedicine) {
+            $date = $scheduledMedicines[$key]->getIntakeTime();
+            $date->setDate($today[0], $today[1], $today[2]);
+            $scheduledMedicines[$key]->setIntakeTime($date);
+        }
+
         usort($scheduledMedicines, function (MedicineSchedule $a, MedicineSchedule $b) {
             return $a->getIntakeTime()->format('H:i:s') > $b->getIntakeTime()->format('H:i:s');
         });

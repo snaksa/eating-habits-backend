@@ -2,7 +2,6 @@
 
 namespace App\Transformers;
 
-use App\Entity\MedicineIntake;
 use App\Entity\MedicineSchedule;
 use App\Traits\DateUtils;
 use League\Fractal\Resource\Collection;

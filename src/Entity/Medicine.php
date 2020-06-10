@@ -43,7 +43,7 @@ class Medicine
 
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\MedicineSchedule", mappedBy="medicine")
-     * @ORM\OrderBy({"date" = "ASC"})
+     * @ORM\OrderBy({"intake_time" = "ASC"})
      */
     private $schedule;
 
