@@ -847,7 +847,7 @@ class WaterSupplyControllerTest extends BaseTestCase
         $this->login();
         $this->setCurrentUser($user);
 
-        $this->get("/water-supplies/groupByDays?startDate=2019-12-10 21:00:00");
+        $this->get("/water-supplies/groupByDays?startDate=2019-12-10 21:00:00&endDate=2019-12-17 21:00:00");
         $content = $this->getContent();
 
         $expected = [
@@ -859,6 +859,26 @@ class WaterSupplyControllerTest extends BaseTestCase
                 [
                     'date' => '2019-12-11 21:00:00Z',
                     'amount' => 1000
+                ],
+                [
+                    'date' => '2019-12-12 21:00:00Z',
+                    'amount' => 0
+                ],
+                [
+                    'date' => '2019-12-13 21:00:00Z',
+                    'amount' => 0
+                ],
+                [
+                    'date' => '2019-12-14 21:00:00Z',
+                    'amount' => 0
+                ],
+                [
+                    'date' => '2019-12-15 21:00:00Z',
+                    'amount' => 0
+                ],
+                [
+                    'date' => '2019-12-16 21:00:00Z',
+                    'amount' => 0
                 ],
             ]
         ];
@@ -945,7 +965,7 @@ class WaterSupplyControllerTest extends BaseTestCase
 
         $date = $this->getCurrentDateTime()->setTime(21, 0, 0);
         $startDate = (clone $date)->modify('- 2 days');
-        $endDate = (clone $startDate)->modify('+ 2 days');
+        $endDate = clone $date;
 
         $waterSupplyRecords = $this->filterFixtures(function ($entity) use ($user, $startDate, $endDate) {
             return $entity instanceof WaterSupply
@@ -967,6 +987,7 @@ class WaterSupplyControllerTest extends BaseTestCase
 
         $this->get("/water-supplies/groupByDays?startDate={$startDate->format('Y-m-d H:i:s')}&endDate={$endDate->format('Y-m-d H:i:s')}");
         $content = $this->getContent();
+        var_dump($content);
 
         $expected = [
             'data' => [

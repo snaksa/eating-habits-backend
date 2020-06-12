@@ -139,6 +139,15 @@ class WaterSupplyController extends BaseController
             $currentDay = (clone $startDate)->modify('+ 1 days');
         }
 
+        while ($startDate < $endDate) {
+            $result[] = [
+                'date' => $this->formatDate($startDate),
+                'amount' => $total
+            ];
+
+            $startDate->modify('+ 1 days');
+        }
+
         return new JsonResponse([
             'data' => $result
         ]);
