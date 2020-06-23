@@ -137,6 +137,12 @@ class WeightControllerTest extends BaseTestCase
                         'id' => $weightRecord->getUser()->getId(),
                         'username' => $weightRecord->getUser()->getUsername(),
                         'name' => $weightRecord->getUser()->getName(),
+                        'lang' => $weightRecord->getUser()->getLang(),
+                        'age' => $weightRecord->getUser()->getAge(),
+                        'gender' => $weightRecord->getUser()->getGender(),
+                        'height' => $weightRecord->getUser()->getHeight(),
+                        'water_calculation' => $weightRecord->getUser()->getWaterCalculation(),
+                        'water_amount' => $weightRecord->getUser()->getWaterAmount(),
                     ]
                 ]
             ]

@@ -137,6 +137,12 @@ class WaterSupplyControllerTest extends BaseTestCase
                         'id' => $waterSupplyRecord->getUser()->getId(),
                         'username' => $waterSupplyRecord->getUser()->getUsername(),
                         'name' => $waterSupplyRecord->getUser()->getName(),
+                        'lang' => $waterSupplyRecord->getUser()->getLang(),
+                        'age' => $waterSupplyRecord->getUser()->getAge(),
+                        'gender' => $waterSupplyRecord->getUser()->getGender(),
+                        'height' => $waterSupplyRecord->getUser()->getHeight(),
+                        'water_calculation' => $waterSupplyRecord->getUser()->getWaterCalculation(),
+                        'water_amount' => $waterSupplyRecord->getUser()->getWaterAmount(),
                     ]
                 ]
             ]
@@ -987,7 +993,6 @@ class WaterSupplyControllerTest extends BaseTestCase
 
         $this->get("/water-supplies/groupByDays?startDate={$startDate->format('Y-m-d H:i:s')}&endDate={$endDate->format('Y-m-d H:i:s')}");
         $content = $this->getContent();
-        var_dump($content);
 
         $expected = [
             'data' => [

@@ -134,6 +134,12 @@ class MedicineControllerTest extends BaseTestCase
                         'id' => $medicineRecord->getUser()->getId(),
                         'username' => $medicineRecord->getUser()->getUsername(),
                         'name' => $medicineRecord->getUser()->getName(),
+                        'lang' => $medicineRecord->getUser()->getLang(),
+                        'age' => $medicineRecord->getUser()->getAge(),
+                        'gender' => $medicineRecord->getUser()->getGender(),
+                        'height' => $medicineRecord->getUser()->getHeight(),
+                        'water_calculation' => $medicineRecord->getUser()->getWaterCalculation(),
+                        'water_amount' => $medicineRecord->getUser()->getWaterAmount(),
                     ]
                 ]
             ]

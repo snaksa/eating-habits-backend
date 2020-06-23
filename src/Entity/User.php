@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Constant\Gender;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -41,6 +42,36 @@ class User implements UserInterface
      * @ORM\Column(type="string")
      */
     private string $password;
+
+    /**
+     * @ORM\Column(type="string")
+     */
+    private ?string $lang = 'en';
+
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private bool $water_calculation = true;
+
+    /**
+     * @ORM\Column(type="integer")
+     */
+    private int $water_amount = 5000;
+
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private ?int $height = null;
+
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private ?int $age = null;
+
+    /**
+     * @ORM\Column(type="integer")
+     */
+    private int $gender = Gender::MALE;
 
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\Meal", mappedBy="user")
@@ -217,6 +248,78 @@ class User implements UserInterface
         if ($this->weights->contains($weight)) {
             $this->weights->removeElement($weight);
         }
+
+        return $this;
+    }
+
+    public function getLang(): ?string
+    {
+        return $this->lang;
+    }
+
+    public function setLang(string $lang): self
+    {
+        $this->lang = $lang;
+
+        return $this;
+    }
+
+    public function getWaterCalculation(): ?bool
+    {
+        return $this->water_calculation;
+    }
+
+    public function setWaterCalculation(bool $water_calculation): self
+    {
+        $this->water_calculation = $water_calculation;
+
+        return $this;
+    }
+
+    public function getWaterAmount(): ?int
+    {
+        return $this->water_amount;
+    }
+
+    public function setWaterAmount(int $water_amount): self
+    {
+        $this->water_amount = $water_amount;
+
+        return $this;
+    }
+
+    public function getHeight(): ?int
+    {
+        return $this->height;
+    }
+
+    public function setHeight(int $height): self
+    {
+        $this->height = $height;
+
+        return $this;
+    }
+
+    public function getAge(): ?int
+    {
+        return $this->age;
+    }
+
+    public function setAge(int $age): self
+    {
+        $this->age = $age;
+
+        return $this;
+    }
+
+    public function getGender(): ?int
+    {
+        return $this->gender;
+    }
+
+    public function setGender(int $gender): self
+    {
+        $this->gender = $gender;
 
         return $this;
     }

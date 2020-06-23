@@ -25,6 +25,12 @@ class UserTransformerTest extends TestCase
             'id' => $user->getId(),
             'username' => $user->getUsername(),
             'name' => $user->getName(),
+            'lang' => $user->getLang(),
+            'age' => $user->getAge(),
+            'gender' => $user->getGender(),
+            'height' => $user->getHeight(),
+            'water_calculation' => $user->getWaterCalculation(),
+            'water_amount' => $user->getWaterAmount(),
         ];
 
         $transformer = new UserTransformer();

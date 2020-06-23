@@ -57,6 +57,30 @@ class UserBuilder extends BaseBuilder
             $this->setPassword($input->password);
         }
 
+        if (property_exists($input, 'lang') && $input->lang !== null) {
+            $this->setLang($input->lang);
+        }
+
+        if (property_exists($input, 'age') && $input->age !== null) {
+            $this->setAge($input->age);
+        }
+
+        if (property_exists($input, 'height') && $input->height !== null) {
+            $this->setHeight($input->height);
+        }
+
+        if (property_exists($input, 'water_calculation') && $input->water_calculation !== null) {
+            $this->setWaterCalculation($input->water_calculation);
+        }
+
+        if (property_exists($input, 'water_amount') && $input->water_amount !== null) {
+            $this->setWaterAmount($input->water_amount);
+        }
+
+        if (property_exists($input, 'gender') && $input->gender !== null) {
+            $this->setGender($input->gender);
+        }
+
         return $this;
     }
 
@@ -74,6 +98,13 @@ class UserBuilder extends BaseBuilder
         return $this;
     }
 
+    public function setLang(string $lang): self
+    {
+        $this->user->setLang($lang);
+
+        return $this;
+    }
+
     public function setName(string $name): self
     {
         $this->user->setName($name);
@@ -85,6 +116,41 @@ class UserBuilder extends BaseBuilder
     {
         $password = $this->passwordEncoder->encodePassword($this->user, $password);
         $this->user->setPassword($password);
+
+        return $this;
+    }
+
+    public function setAge(int $age): self
+    {
+        $this->user->setAge($age);
+
+        return $this;
+    }
+
+    public function setHeight(int $height): self
+    {
+        $this->user->setHeight($height);
+
+        return $this;
+    }
+
+    public function setWaterCalculation(bool $waterCalculation): self
+    {
+        $this->user->setWaterCalculation($waterCalculation);
+
+        return $this;
+    }
+
+    public function setWaterAmount(int $waterAmount): self
+    {
+        $this->user->setWaterAmount($waterAmount);
+
+        return $this;
+    }
+
+    public function setGender(int $gender): self
+    {
+        $this->user->setGender($gender);
 
         return $this;
     }

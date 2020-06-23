@@ -20,6 +20,12 @@ class UserTransformer extends TransformerAbstract
             'id' => $user->getId(),
             'username' => $user->getUsername(),
             'name' => $user->getName() ?? $user->getUsername(),
+            'lang' => $user->getLang(),
+            'age' => $user->getAge(),
+            'gender' => $user->getGender(),
+            'height' => $user->getHeight(),
+            'water_calculation' => $user->getWaterCalculation(),
+            'water_amount' => $user->getWaterAmount(),
         ];
     }
 

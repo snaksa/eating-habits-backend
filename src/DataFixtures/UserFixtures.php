@@ -2,6 +2,7 @@
 
 namespace App\DataFixtures;
 
+use App\Constant\Gender;
 use App\Entity\User;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
@@ -25,6 +26,11 @@ class UserFixtures extends Fixture
         $password = $this->passwordEncoder
             ->encodePassword($user, '123456');
         $user->setPassword($password);
+        $user->setWaterAmount(3400);
+        $user->setWaterCalculation(false);
+        $user->setGender(Gender::MALE);
+        $user->setHeight(177);
+        $user->setAge(23);
         $manager->persist($user);
         $this->setReference('user_demo', $user);
 
@@ -34,7 +40,11 @@ class UserFixtures extends Fixture
         $user->setRoles(['ROLE_USER']);
         $password = $this->passwordEncoder
             ->encodePassword($user, '123456');
-        $user->setPassword($password);
+        $user->setPassword($password);;
+        $user->setWaterCalculation(true);
+        $user->setGender(Gender::FEMALE);
+        $user->setHeight(165);
+        $user->setAge(34);
         $manager->persist($user);
         $this->setReference('user_demo2', $user);
 
@@ -45,6 +55,11 @@ class UserFixtures extends Fixture
         $password = $this->passwordEncoder
             ->encodePassword($user, '123456');
         $user->setPassword($password);
+        $user->setWaterAmount(4500);
+        $user->setWaterCalculation(false);
+        $user->setGender(Gender::MALE);
+        $user->setHeight(190);
+        $user->setAge(28);
         $manager->persist($user);
         $this->setReference('user_demo3', $user);
 

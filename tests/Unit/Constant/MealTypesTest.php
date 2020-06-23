@@ -3,13 +3,10 @@
 namespace App\Tests\Unit\Constant;
 
 use App\Constant\MealTypes;
-use App\Traits\DateUtils;
 use PHPUnit\Framework\TestCase;
 
 class MealTypesTest extends TestCase
 {
-    use DateUtils;
-
     public function testAllTypesMethod()
     {
         $expected = [

@@ -94,6 +94,12 @@ class UserBuilderTest extends TestCase
 
         $request = new UpdateUserRequest(new Request());
         $request->name = 'John Doe';
+        $request->age = 27;
+        $request->height = 190;
+        $request->water_calculation = false;
+        $request->water_amount = 1900;
+        $request->gender = 2;
+        $request->lang = 'es';
 
         $service = new UserBuilder($passwordEncoder, $jwtTokenManager);
 
@@ -103,6 +109,12 @@ class UserBuilderTest extends TestCase
             ->build();
 
         $this->assertEquals('John Doe', $user->getName());
+        $this->assertEquals(27, $user->getAge());
+        $this->assertEquals(190, $user->getHeight());
+        $this->assertEquals(false, $user->getWaterCalculation());
+        $this->assertEquals(1900, $user->getWaterAmount());
+        $this->assertEquals(2, $user->getGender());
+        $this->assertEquals('es', $user->getLang());
     }
 
     public function test_user_builder_get_api_key()

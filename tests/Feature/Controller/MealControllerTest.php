@@ -142,6 +142,12 @@ class MealControllerTest extends BaseTestCase
                         'id' => $mealRecord->getUser()->getId(),
                         'username' => $mealRecord->getUser()->getUsername(),
                         'name' => $mealRecord->getUser()->getName(),
+                        'lang' => $mealRecord->getUser()->getLang(),
+                        'age' => $mealRecord->getUser()->getAge(),
+                        'gender' => $mealRecord->getUser()->getGender(),
+                        'height' => $mealRecord->getUser()->getHeight(),
+                        'water_calculation' => $mealRecord->getUser()->getWaterCalculation(),
+                        'water_amount' => $mealRecord->getUser()->getWaterAmount(),
                     ]
                 ]
             ]

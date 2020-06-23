@@ -167,6 +167,27 @@ class UserControllerTest extends BaseTestCase
     /**
      * @test
      */
+    public function testUserRefreshToken()
+    {
+        $userRepositoryMock = $this->createMock(UserRepository::class);
+        $userRepositoryMock->expects($this->once())->method('findOneBy')->willReturn($this->user);
+        $this->client->getContainer()->set(UserRepository::class, $userRepositoryMock);
+
+        $this->login();
+        $this->setCurrentUser($this->user);
+
+        $this->get('/users/refresh');
+        $content = $this->getContent();
+
+        $this->assertResponseStatusCode(200);
+        $this->assertArrayHasKey('data', $content);
+        $this->assertArrayHasKey('token', $content['data']);
+        $this->assertArrayHasKey('expiresIn', $content['data']);
+    }
+
+    /**
+     * @test
+     */
     public function testUserMe()
     {
         $userRepositoryMock = $this->createMock(UserRepository::class);
@@ -183,7 +204,13 @@ class UserControllerTest extends BaseTestCase
             'data' => [
                 'id' => $this->user->getId(),
                 'username' => $this->user->getUsername(),
-                'name' => $this->user->getName()
+                'name' => $this->user->getName(),
+                'age'=> $this->user->getAge(),
+                'height' => $this->user->getHeight(),
+                'water_calculation' => $this->user->getWaterCalculation(),
+                'water_amount' => $this->user->getWaterAmount(),
+                'gender' => $this->user->getGender(),
+                'lang' => $this->user->getLang()
             ]
         ];
 
@@ -207,7 +234,13 @@ class UserControllerTest extends BaseTestCase
         $this->post(
             "/users/{$this->user->getId()}",
             [
-                'name' => 'test name'
+                'name' => 'test name',
+                'age'=> 24,
+                'height' => 180,
+                'water_calculation' => false,
+                'water_amount' => 1000,
+                'gender' => 1,
+                'lang' => 'es'
             ]
         );
         $content = $this->getContent();
@@ -216,11 +249,116 @@ class UserControllerTest extends BaseTestCase
             'data' => [
                 'id' => $this->user->getId(),
                 'username' => $this->user->getUsername(),
-                'name' => 'test name'
+                'name' => 'test name',
+                'age'=> 24,
+                'height' => 180,
+                'water_calculation' => false,
+                'water_amount' => 1000,
+                'gender' => 1,
+                'lang' => 'es'
             ]
         ];
 
         $this->assertResponseStatusCode(200);
+        $this->assertEquals($expected, $content);
+    }
+
+    /**
+     * @test
+     */
+    public function testUserUpdateInvalidAge()
+    {
+        $userRepositoryMock = $this->createMock(UserRepository::class);
+        $userRepositoryMock->expects($this->once())->method('findOneBy')->willReturn($this->user);
+        $this->client->getContainer()->set(UserRepository::class, $userRepositoryMock);
+
+        $this->login();
+
+        $this->post(
+            "/users/{$this->user->getId()}",
+            [
+                'age' => -1
+            ]
+        );
+        $content = $this->getContent();
+
+        $expected = [
+            'error' => [
+                'type' => 'InvalidDataException',
+                'message' => [
+                    'age should be a positive number'
+                ],
+                'status' => 400
+            ]
+        ];
+
+        $this->assertResponseStatusCode(400);
+        $this->assertEquals($expected, $content);
+    }
+
+    /**
+     * @test
+     */
+    public function testUserUpdateInvalidHeight()
+    {
+        $userRepositoryMock = $this->createMock(UserRepository::class);
+        $userRepositoryMock->expects($this->once())->method('findOneBy')->willReturn($this->user);
+        $this->client->getContainer()->set(UserRepository::class, $userRepositoryMock);
+
+        $this->login();
+
+        $this->post(
+            "/users/{$this->user->getId()}",
+            [
+                'height' => -1
+            ]
+        );
+        $content = $this->getContent();
+
+        $expected = [
+            'error' => [
+                'type' => 'InvalidDataException',
+                'message' => [
+                    'height should be a positive number'
+                ],
+                'status' => 400
+            ]
+        ];
+
+        $this->assertResponseStatusCode(400);
+        $this->assertEquals($expected, $content);
+    }
+
+    /**
+     * @test
+     */
+    public function testUserUpdateInvalidWaterAmount()
+    {
+        $userRepositoryMock = $this->createMock(UserRepository::class);
+        $userRepositoryMock->expects($this->once())->method('findOneBy')->willReturn($this->user);
+        $this->client->getContainer()->set(UserRepository::class, $userRepositoryMock);
+
+        $this->login();
+
+        $this->post(
+            "/users/{$this->user->getId()}",
+            [
+                'water_amount' => -1
+            ]
+        );
+        $content = $this->getContent();
+
+        $expected = [
+            'error' => [
+                'type' => 'InvalidDataException',
+                'message' => [
+                    'water_amount should be a positive number'
+                ],
+                'status' => 400
+            ]
+        ];
+
+        $this->assertResponseStatusCode(400);
         $this->assertEquals($expected, $content);
     }
 

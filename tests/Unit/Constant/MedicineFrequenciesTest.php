@@ -3,13 +3,10 @@
 namespace App\Tests\Unit\Constant;
 
 use App\Constant\MedicineFrequencies;
-use App\Traits\DateUtils;
 use PHPUnit\Framework\TestCase;
 
 class MedicineFrequenciesTest extends TestCase
 {
-    use DateUtils;
-
     public function testAllTypesMethod()
     {
         $expected = [

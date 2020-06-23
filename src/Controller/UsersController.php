@@ -66,7 +66,7 @@ class UsersController extends BaseController
         $token = $this->builder
             ->getApiKey();
 
-        return $this->item(['token' => $token, 'expiresIn' => 108000], ApiKeyTransformer::class);
+        return $this->item(['token' => $token, 'expiresIn' => 604800], ApiKeyTransformer::class);
     }
 
     /**
@@ -87,7 +87,25 @@ class UsersController extends BaseController
             ->setUser($user)
             ->getApiKey();
 
-        return $this->item(['token' => $token, 'expiresIn' => 108000], ApiKeyTransformer::class);
+        return $this->item(['token' => $token, 'expiresIn' => 604800], ApiKeyTransformer::class);
+    }
+
+    /**
+     * @IsGranted("ROLE_USER")
+     * @Route("/users/refresh", methods={"GET"})
+     * @param Request $request
+     * @return JsonResponse
+     * @throws Exception\NotAuthenticatedException
+     */
+    public function refresh(Request $request)
+    {
+        $this->setRequest($request);
+
+        $token = $this->builder
+            ->setUser($this->authService->getCurrentUser())
+            ->getApiKey();
+
+        return $this->item(['token' => $token, 'expiresIn' => 604800], ApiKeyTransformer::class);
     }
 
     /**

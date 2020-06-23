@@ -93,11 +93,8 @@
     "doctrine/reflection": {
         "version": "1.2.1"
     },
-    "gitonomy/gitlib": {
-        "version": "v1.2.1"
-    },
-    "jdorn/sql-formatter": {
-        "version": "v1.2.17"
+    "doctrine/sql-formatter": {
+        "version": "1.1.0"
     },
     "laminas/laminas-code": {
         "version": "3.4.1"
@@ -132,9 +129,6 @@
     "liip/test-fixtures-bundle": {
         "version": "1.9.1"
     },
-    "monolog/monolog": {
-        "version": "2.0.2"
-    },
     "myclabs/deep-copy": {
         "version": "1.9.5"
     },
@@ -167,9 +161,6 @@
     },
     "phpdocumentor/type-resolver": {
         "version": "1.1.0"
-    },
-    "phpro/grumphp": {
-        "version": "v0.18.0"
     },
     "phpspec/prophecy": {
         "version": "v1.10.3"
@@ -256,9 +247,6 @@
     },
     "sebastian/version": {
         "version": "3.0.0"
-    },
-    "seld/jsonlint": {
-        "version": "1.7.2"
     },
     "sensio/framework-extra-bundle": {
         "version": "5.2",
@@ -395,9 +383,6 @@
     "symfony/mime": {
         "version": "v5.0.7"
     },
-    "symfony/options-resolver": {
-        "version": "v5.0.7"
-    },
     "symfony/orm-pack": {
         "version": "v1.0.8"
     },
@@ -425,8 +410,8 @@
     "symfony/polyfill-php73": {
         "version": "v1.15.0"
     },
-    "symfony/process": {
-        "version": "v5.0.7"
+    "symfony/polyfill-php80": {
+        "version": "v1.17.1"
     },
     "symfony/property-access": {
         "version": "v5.0.7"
