@@ -17,6 +17,8 @@ services:
     build:
       context: .
     container_name: eating-habits-backend-php
+    volumes:
+      - ./dbData:/var/lib/mysql
     links:
       - db
     volumes:
