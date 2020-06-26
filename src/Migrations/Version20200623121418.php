@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Migrations;
 
+use App\Constant\Gender;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
 
@@ -12,7 +13,7 @@ use Doctrine\Migrations\AbstractMigration;
  */
 final class Version20200623121418 extends AbstractMigration
 {
-    public function getDescription() : string
+    public function getDescription(): string
     {
         return '';
     }
@@ -22,22 +23,28 @@ final class Version20200623121418 extends AbstractMigration
         $table = $schema->getTable('users');
 
         $table->addColumn('lang', 'string')
-            ->setNotnull(false);
+            ->setNotnull(false)
+            ->setDefault('en');
 
         $table->addColumn('water_calculation', 'boolean')
-            ->setNotnull(false);
+            ->setNotnull(false)
+            ->setDefault(false);
 
         $table->addColumn('water_amount', 'integer')
-            ->setNotnull(false);
+            ->setNotnull(false)
+            ->setDefault(5000);
 
         $table->addColumn('height', 'integer')
-            ->setNotnull(false);
+            ->setNotnull(false)
+            ->setDefault(170);
 
         $table->addColumn('age', 'integer')
-            ->setNotnull(false);
+            ->setNotnull(false)
+            ->setDefault(18);
 
         $table->addColumn('gender', 'boolean')
-            ->setNotnull(false);
+            ->setNotnull(false)
+            ->setDefault(Gender::MALE);
     }
 
     public function down(Schema $schema): void

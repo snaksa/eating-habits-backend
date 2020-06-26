@@ -51,7 +51,7 @@ class User implements UserInterface
     /**
      * @ORM\Column(type="boolean")
      */
-    private bool $water_calculation = true;
+    private bool $water_calculation = false;
 
     /**
      * @ORM\Column(type="integer")
